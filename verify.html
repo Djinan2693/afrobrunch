@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Check your reservation — Afro Brunch</title>
+  <meta name="description"
+    content="Enter your Afro Brunch reservation number to check that your seat for September 27, 2026 is confirmed.">
+  <meta name="robots" content="noindex">
+
+  <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/afrobrunch.css">
+</head>
+
+<body class="vf-body">
+
+  <main class="vf-main">
+
+    <div class="vf-card">
+
+      <a href="./index.html">
+        <img src="./assets/images/afro-logo.jpeg" width="84" height="84" alt="Afro Brunch" class="afro-logo">
+      </a>
+
+      <p class="section-subtitle label-2">At The Door</p>
+      <h1 class="headline-2">Check Your Reservation</h1>
+
+      <p class="vf-msg" style="margin-block-start: 16px;">
+        Enter the reservation number from your confirmation email.
+      </p>
+
+      <form class="vf-form" data-verify-form>
+        <label class="bk-label" for="vf-ref" style="text-align:left;">Reservation number</label>
+
+        <input type="text" id="vf-ref" class="input-field" placeholder="AB26-XXXXXX" autocomplete="off"
+          spellcheck="false" maxlength="14" required>
+
+        <button type="submit" class="btn btn-secondary">
+          <span class="text text-1">Check</span>
+          <span class="text text-2" aria-hidden="true">Check</span>
+        </button>
+      </form>
+
+      <div data-verify-result></div>
+
+      <a href="./index.html" class="vf-back">← Back to Afro Brunch</a>
+
+    </div>
+
+  </main>
+
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/verify.js"></script>
+
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,872 @@
+/*-----------------------------------*\
+  #afrobrunch.css
+  Surcouche Afro Brunch par-dessus le template Grilli.
+  Ne modifie jamais style.css : tout est surcharge ici.
+\*-----------------------------------*/
+
+
+/*-----------------------------------*\
+  #PALETTE DE MARQUE
+\*-----------------------------------*/
+
+:root {
+  /* or du logo, legerement plus chaud et plus sature que celui du template */
+  --gold-crayola: hsl(42, 68%, 68%);
+
+  --afro-gold-deep: hsl(43, 74%, 49%);
+  --afro-orange: hsl(17, 78%, 53%);
+  --afro-green: hsl(146, 44%, 34%);
+  --afro-danger: hsl(4, 72%, 62%);
+  --afro-line: hsla(42, 68%, 68%, 0.18);
+  --afro-surface: hsla(0, 0%, 100%, 0.03);
+}
+
+
+/*-----------------------------------*\
+  #LOGO
+\*-----------------------------------*/
+
+.afro-logo {
+  border-radius: var(--radius-circle);
+  display: block;
+}
+
+.header .logo,
+.footer-brand .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: max-content;
+}
+
+.footer-brand .logo { margin-inline: auto; }
+
+.afro-logo-text {
+  display: none;
+  font-family: var(--fontFamily-forum);
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: var(--letterSpacing-1);
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.afro-logo-text em {
+  display: block;
+  font-size: 1.5rem;
+  font-style: normal;
+  letter-spacing: var(--letterSpacing-4);
+  color: var(--gold-crayola);
+}
+
+.navbar .logo .afro-logo { margin-inline: auto; }
+
+
+/*-----------------------------------*\
+  #RETOUCHES DE SECTIONS EXISTANTES
+\*-----------------------------------*/
+
+.about .section-text + .section-text { margin-block-start: 18px; }
+
+/* la photo du chef (abs-img-1) a ete retiree : on recupere le decalage a gauche
+   et l'espace qu'elle occupait sous le visuel */
+.about-banner { margin-block-end: 40px; }
+
+.about-banner > .w-100 { padding-inline-start: 0; }
+
+.special-dish-content .wrapper { justify-content: center; }
+
+.special-dish-content .wrapper .span small {
+  font-size: 1.6rem;
+  color: var(--quick-silver);
+}
+
+.menu-card .card-title { cursor: default; }
+
+.footer-verify-btn { margin-inline: auto; }
+
+.hw-gallery { margin-block-start: 60px; }
+
+
+/*-----------------------------------*\
+  #HOW IT WORKS
+\*-----------------------------------*/
+
+.hw-list {
+  display: grid;
+  gap: 30px;
+  margin-block-start: 50px;
+}
+
+.hw-item {
+  position: relative;
+  padding: 30px 26px 30px 30px;
+  background-color: var(--eerie-black-2);
+  border: 1px solid var(--afro-line);
+  border-top: 3px solid var(--gold-crayola);
+}
+
+.hw-num {
+  display: block;
+  font-family: var(--fontFamily-forum);
+  font-size: 4.2rem;
+  line-height: 1;
+  color: var(--gold-crayola);
+  opacity: 0.55;
+  margin-block-end: 10px;
+}
+
+.hw-title { margin-block-end: 8px; }
+
+.hw-text { color: var(--quick-silver); }
+
+
+/*-----------------------------------*\
+  #BOOKING — MISE EN PAGE
+\*-----------------------------------*/
+
+.booking { scroll-margin-top: 90px; }
+
+.bk-intro {
+  max-width: 62ch;
+  margin-inline: auto;
+  margin-block-end: 50px;
+}
+
+.bk-layout {
+  display: grid;
+  gap: 30px;
+  align-items: start;
+}
+
+.bk-main {
+  padding: 30px 20px 40px;
+  border: 1px solid var(--afro-line);
+}
+
+
+/*-----------------------------------*\
+  #BOOKING — FIL D'ETAPES
+\*-----------------------------------*/
+
+.bk-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 6px;
+  margin-block-end: 36px;
+  padding-block-end: 26px;
+  border-block-end: 1px solid var(--afro-line);
+}
+
+.bk-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: max-content;
+  color: var(--davys-grey);
+  font-size: var(--fontSize-label-2);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-1);
+  transition: color var(--transition-1);
+}
+
+.bk-step-num {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-circle);
+  font-family: var(--fontFamily-forum);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.bk-step-label { display: none; }
+
+.bk-step.is-done {
+  color: var(--gold-crayola);
+}
+
+.bk-step.is-active {
+  color: var(--gold-crayola);
+  font-weight: var(--weight-bold);
+}
+
+.bk-step.is-active .bk-step-num {
+  background-color: var(--gold-crayola);
+  border-color: var(--gold-crayola);
+  color: var(--smoky-black-1);
+}
+
+.bk-step.is-active .bk-step-label { display: block; }
+
+
+/*-----------------------------------*\
+  #BOOKING — PANNEAUX
+\*-----------------------------------*/
+
+.bk-panel { display: none; }
+
+.bk-panel.is-active {
+  display: block;
+  animation: bkFade 400ms ease both;
+}
+
+@keyframes bkFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bk-panel-title {
+  color: var(--white);
+  margin-block-end: 26px;
+}
+
+.bk-field { margin-block-end: 22px; }
+
+.bk-label {
+  display: block;
+  font-size: var(--fontSize-label-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--letterSpacing-1);
+  text-transform: uppercase;
+  color: var(--white);
+  margin-block-end: 10px;
+}
+
+.bk-req { color: var(--afro-orange); }
+
+.bk-field .input-field {
+  width: 100%;
+  margin-block-end: 0;
+}
+
+.bk-field .icon-wrapper { margin-block-end: 0; }
+
+.bk-hint {
+  font-size: var(--fontSize-label-2);
+  line-height: var(--lineHeight-4);
+  color: var(--quick-silver);
+  margin-block-start: 8px;
+}
+
+.bk-row { display: grid; gap: 22px; }
+
+.input-field.is-invalid { border-color: var(--afro-danger); }
+
+.bk-error {
+  color: var(--afro-danger);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+  border-inline-start: 3px solid var(--afro-danger);
+  padding: 10px 14px;
+  background-color: hsla(4, 72%, 62%, 0.08);
+  margin-block-end: 22px;
+}
+
+.bk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-block-start: 10px;
+}
+
+.bk-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  transition: color var(--transition-1);
+}
+
+.bk-back:is(:hover, :focus-visible) { color: var(--gold-crayola); }
+
+.bk-next { margin-block-start: 10px; }
+
+
+/*-----------------------------------*\
+  #BOOKING — ETAPE PAIEMENT
+\*-----------------------------------*/
+
+.bk-amount-line {
+  font-size: var(--fontSize-body-4);
+  color: var(--quick-silver);
+  margin-block-end: 24px;
+}
+
+.bk-amount {
+  display: inline-block;
+  font-family: var(--fontFamily-forum);
+  font-size: 3.2rem;
+  line-height: 1;
+  color: var(--gold-crayola);
+  letter-spacing: var(--letterSpacing-1);
+  vertical-align: -4px;
+  margin-inline-start: 6px;
+}
+
+.bk-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-block-end: 26px;
+}
+
+.bk-tab {
+  flex: 1 1 140px;
+  padding: 13px 18px;
+  border: 1px solid var(--afro-line);
+  background-color: var(--eerie-black-2);
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  cursor: pointer;
+  transition: var(--transition-1);
+}
+
+.bk-tab:is(:hover, :focus-visible) {
+  color: var(--white);
+  border-color: var(--gold-crayola);
+}
+
+.bk-tab.is-active {
+  background-color: var(--gold-crayola);
+  border-color: var(--gold-crayola);
+  color: var(--smoky-black-1);
+}
+
+.bk-qr-wrap {
+  display: grid;
+  gap: 26px;
+  align-items: center;
+  padding: 24px;
+  background-color: var(--eerie-black-2);
+  border: 1px solid var(--afro-line);
+}
+
+.bk-qr {
+  max-width: 280px;
+  margin-inline: auto;
+  border-radius: var(--radius-24);
+  overflow: hidden;
+  background-color: var(--white);
+}
+
+.bk-qr img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bk-qr-info .contact-label {
+  color: var(--gold-crayola);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  font-size: var(--fontSize-label-2);
+  margin-block-end: 8px;
+}
+
+.bk-acc-name {
+  font-family: var(--fontFamily-forum);
+  font-size: 2.2rem;
+  line-height: var(--lineHeight-2);
+  color: var(--white);
+  letter-spacing: var(--letterSpacing-1);
+}
+
+.bk-acc-ref {
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  margin-block-start: 4px;
+}
+
+.bk-qr-info .separator { margin-block: 18px; }
+
+.bk-note {
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+}
+
+.bk-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 16px;
+  color: var(--gold-crayola);
+  font-size: var(--fontSize-label-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  transition: color var(--transition-1);
+}
+
+.bk-download:is(:hover, :focus-visible) { color: var(--white); }
+
+.bk-howpay {
+  counter-reset: howpay;
+  margin-block: 26px 6px;
+}
+
+.bk-howpay li {
+  position: relative;
+  counter-increment: howpay;
+  padding-inline-start: 38px;
+  padding-block: 8px;
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+}
+
+.bk-howpay li::before {
+  content: counter(howpay);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-circle);
+  background-color: var(--afro-surface);
+  border: 1px solid var(--afro-line);
+  color: var(--gold-crayola);
+  font-family: var(--fontFamily-forum);
+  font-size: 1.3rem;
+}
+
+.bk-howpay strong { color: var(--gold-crayola); }
+
+
+/*-----------------------------------*\
+  #BOOKING — ETAPE PREUVE
+\*-----------------------------------*/
+
+.bk-drop {
+  display: grid;
+  place-items: center;
+  min-height: 190px;
+  padding: 24px;
+  text-align: center;
+  border: 2px dashed var(--afro-line);
+  background-color: var(--eerie-black-2);
+  cursor: pointer;
+  transition: var(--transition-1);
+}
+
+.bk-drop:is(:hover, :focus-within),
+.bk-drop.is-dragover { border-color: var(--gold-crayola); }
+
+.bk-drop-inner {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.bk-drop-inner ion-icon {
+  font-size: 4rem;
+  color: var(--gold-crayola);
+}
+
+.bk-drop-title {
+  font-size: var(--fontSize-label-1);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  color: var(--white);
+}
+
+.bk-drop-preview {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.bk-drop-preview img {
+  max-height: 260px;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--afro-line);
+}
+
+.bk-drop-meta {
+  font-size: var(--fontSize-label-2);
+  color: var(--quick-silver);
+}
+
+.bk-clear {
+  margin-block-start: 12px;
+  color: var(--afro-danger);
+  font-size: var(--fontSize-label-2);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  cursor: pointer;
+}
+
+.bk-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-block: 6px 26px;
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+  cursor: pointer;
+}
+
+.bk-check input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-block-start: 3px;
+  accent-color: var(--afro-gold-deep);
+  cursor: pointer;
+}
+
+.bk-sending {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-start: 20px;
+  color: var(--gold-crayola);
+  font-size: var(--fontSize-label-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+}
+
+.bk-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--afro-line);
+  border-top-color: var(--gold-crayola);
+  border-radius: var(--radius-circle);
+  animation: bkSpin 700ms linear infinite;
+}
+
+@keyframes bkSpin { to { transform: rotate(360deg); } }
+
+
+/*-----------------------------------*\
+  #BOOKING — CONFIRMATION
+\*-----------------------------------*/
+
+.bk-done { text-align: center; }
+
+.bk-done-icon ion-icon {
+  font-size: 7rem;
+  color: var(--afro-green);
+}
+
+.bk-done .bk-panel-title { margin-block: 10px 20px; }
+
+.bk-done-text {
+  color: var(--quick-silver);
+  line-height: var(--lineHeight-5);
+  max-width: 52ch;
+  margin-inline: auto;
+}
+
+.bk-done-text strong { color: var(--white); }
+
+.bk-done-small { font-size: var(--fontSize-label-1); }
+
+.bk-done-label {
+  color: var(--gold-crayola);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  font-size: var(--fontSize-label-2);
+  margin-block: 30px 10px;
+}
+
+.bk-ref {
+  display: inline-block;
+  font-family: var(--fontFamily-forum);
+  font-size: 3.4rem;
+  line-height: 1;
+  letter-spacing: var(--letterSpacing-3);
+  color: var(--gold-crayola);
+  border: 1px dashed var(--gold-crayola);
+  padding: 16px 26px;
+  margin-block-end: 30px;
+  word-break: break-all;
+}
+
+.bk-done-btn { margin: 30px auto 0; }
+
+
+/*-----------------------------------*\
+  #BOOKING — RECAPITULATIF
+\*-----------------------------------*/
+
+.bk-summary {
+  padding: 34px 26px;
+  background-color: var(--eerie-black-2);
+  border: 1px solid var(--afro-line);
+  border-top: 3px solid var(--gold-crayola);
+  text-align: center;
+}
+
+.bk-summary .section-subtitle::after { margin-inline: auto; }
+
+.bk-sum-title {
+  color: var(--white);
+  margin-block-end: 24px;
+}
+
+.bk-sum-list {
+  display: grid;
+  gap: 16px;
+  text-align: left;
+  margin-block-end: 24px;
+}
+
+.bk-sum-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+}
+
+.bk-sum-list ion-icon {
+  flex-shrink: 0;
+  font-size: 2rem;
+  color: var(--gold-crayola);
+  margin-block-start: 2px;
+}
+
+.bk-summary .separator { margin: 0 auto 22px; }
+
+.bk-sum-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 9px;
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-1);
+}
+
+.bk-sum-total {
+  margin-block-start: 6px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--afro-line);
+  color: var(--white);
+}
+
+.bk-sum-total span:last-child {
+  font-family: var(--fontFamily-forum);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--gold-crayola);
+}
+
+.bk-sum-note {
+  margin-block-start: 22px;
+  font-size: var(--fontSize-label-2);
+  line-height: var(--lineHeight-4);
+  color: var(--davys-grey);
+}
+
+.bk-sum-note em { color: var(--gold-crayola); font-style: normal; }
+
+
+/*-----------------------------------*\
+  #PAGE DE VERIFICATION
+\*-----------------------------------*/
+
+.vf-body {
+  min-height: 100vh;
+  height: auto;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.vf-main {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 130px 16px 70px;
+}
+
+.vf-card {
+  width: 100%;
+  max-width: 560px;
+  padding: 40px 24px;
+  background-color: var(--smoky-black-2);
+  border: 1px solid var(--afro-line);
+  border-top: 3px solid var(--gold-crayola);
+  text-align: center;
+}
+
+.vf-card .afro-logo {
+  width: 84px;
+  height: 84px;
+  margin-inline: auto;
+  margin-block-end: 22px;
+}
+
+.vf-form {
+  display: grid;
+  gap: 14px;
+  margin-block-start: 30px;
+}
+
+.vf-form .input-field {
+  width: 100%;
+  margin-block-end: 0;
+  text-align: center;
+  font-family: var(--fontFamily-forum);
+  font-size: 2.2rem;
+  letter-spacing: var(--letterSpacing-3);
+  text-transform: uppercase;
+}
+
+.vf-form .btn { margin-inline: auto; }
+
+.vf-result {
+  margin-block-start: 30px;
+  padding: 26px 20px;
+  border: 1px solid var(--afro-line);
+  background-color: var(--eerie-black-2);
+  text-align: left;
+}
+
+.vf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: var(--fontSize-label-2);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+  margin-block-end: 20px;
+}
+
+.vf-badge ion-icon { font-size: 1.8rem; }
+
+.vf-badge.is-ok { background-color: var(--afro-green); color: var(--white); }
+.vf-badge.is-pending { background-color: var(--afro-orange); color: var(--smoky-black-1); }
+.vf-badge.is-bad { background-color: var(--afro-danger); color: var(--smoky-black-1); }
+
+.vf-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 10px;
+  border-block-end: 1px solid var(--afro-line);
+  font-size: var(--fontSize-label-1);
+  color: var(--quick-silver);
+}
+
+.vf-line:last-child { border-block-end: none; }
+
+.vf-line strong {
+  color: var(--white);
+  text-align: right;
+  font-weight: var(--weight-bold);
+}
+
+.vf-msg {
+  color: var(--quick-silver);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+}
+
+.vf-back {
+  display: inline-block;
+  margin-block-start: 30px;
+  color: var(--gold-crayola);
+  font-size: var(--fontSize-label-1);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-3);
+}
+
+.vf-staff {
+  margin-block-start: 20px;
+  padding-block-start: 20px;
+  border-block-start: 1px dashed var(--afro-line);
+}
+
+
+/*-----------------------------------*\
+  #CONFIG MANQUANTE (avertissement dev)
+\*-----------------------------------*/
+
+.bk-setup {
+  margin-block-end: 26px;
+  padding: 16px 18px;
+  border: 1px solid var(--afro-orange);
+  background-color: hsla(17, 78%, 53%, 0.08);
+  color: var(--white);
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+}
+
+.bk-setup code {
+  color: var(--gold-crayola);
+  font-family: monospace;
+}
+
+
+/*-----------------------------------*\
+  #RESPONSIVE
+\*-----------------------------------*/
+
+@media (min-width: 575px) {
+
+  .bk-main { padding: 36px 30px 46px; }
+
+  .bk-row { grid-template-columns: 1fr 1fr; }
+
+  .bk-step-label { display: block; }
+
+  .hw-list { grid-template-columns: repeat(2, 1fr); }
+
+}
+
+
+@media (min-width: 768px) {
+
+  .bk-main { padding: 44px 40px 50px; }
+
+  .bk-qr-wrap { grid-template-columns: 280px 1fr; }
+
+  .bk-qr { margin-inline: 0; }
+
+  .vf-card { padding: 50px 44px; }
+
+}
+
+
+@media (min-width: 992px) {
+
+  .bk-layout { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 34px; }
+
+  .bk-side { position: sticky; top: 110px; }
+
+  .hw-list { grid-template-columns: repeat(4, 1fr); }
+
+}
+
+
+@media (min-width: 1200px) {
+
+  .afro-logo-text { display: block; }
+
+  .bk-main { padding: 50px 50px 56px; }
+
+}
