@@ -106,16 +106,6 @@
   border-top: 3px solid var(--gold-crayola);
 }
 
-.hw-num {
-  display: block;
-  font-family: var(--fontFamily-forum);
-  font-size: 4.2rem;
-  line-height: 1;
-  color: var(--gold-crayola);
-  opacity: 0.55;
-  margin-block-end: 10px;
-}
-
 .hw-title { margin-block-end: 8px; }
 
 .hw-text { color: var(--quick-silver); }
