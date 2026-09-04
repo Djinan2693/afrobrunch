@@ -23,6 +23,21 @@
 
 
 /*-----------------------------------*\
+  #CORRECTIF : L'ATTRIBUT hidden
+\*-----------------------------------*/
+
+/* Le reset du template applique « display: block » a a, img, data, span,
+   input, button, select, ion-icon et textarea. Or une regle de feuille de
+   style l'emporte toujours sur le [hidden] du navigateur, quelle que soit sa
+   specificite. Resultat : tout element porteur de l'attribut hidden restait
+   visible — l'apercu vide de la capture de paiement, le bouton « choisir un
+   fichier », la ligne « Children x 0 » du recapitulatif, le message d'envoi
+   en cours, et l'onglet « I lost my number » de la page de verification.
+   Cette regle retablit le comportement attendu pour tout le site. */
+[hidden] { display: none !important; }
+
+
+/*-----------------------------------*\
   #LOGO
 \*-----------------------------------*/
 
