@@ -31,9 +31,15 @@
  */
 
 
-/* << A REMPLIR >> La même phrase que celle mise dans la config du serveur.
-   Elle empêche n'importe qui d'écrire dans votre feuille. */
-var SECRET = 'changez-moi-par-une-longue-phrase-aleatoire';
+/* << A REMPLIR DANS L'EDITEUR APPS SCRIPT, PAS ICI >>
+ *
+ * Ce dépôt GitHub est PUBLIC : la vraie clé ne doit jamais figurer dans ce
+ * fichier. Écrivez-la uniquement dans l'éditeur Apps Script, où elle reste
+ * privée, et communiquez-la pour qu'elle soit reportée dans la configuration
+ * du serveur (/home/afrobrunch/afrobrunch-config.php, hors dépôt).
+ *
+ * Elle empêche n'importe qui d'écrire dans votre feuille. */
+var SECRET = 'A_REMPLACER_DANS_L_EDITEUR_APPS_SCRIPT';
 
 var SHEET_NAME = 'Reservations confirmees';
 
@@ -169,7 +175,7 @@ function setup() {
   var sheet = getSheet_();
   var report = 'Feuille « ' + sheet.getName() + ' » prete, '
     + Math.max(0, sheet.getLastRow() - 1) + ' reservation(s).'
-    + (SECRET.indexOf('changez-moi') > -1 ? '\n\nATTENTION : le SECRET est encore celui par defaut.' : '');
+    + (SECRET.indexOf('A_REMPLACER') > -1 ? '\n\nATTENTION : le SECRET est encore celui par defaut.' : '');
   Logger.log(report);
   return report;
 }
