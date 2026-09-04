@@ -410,7 +410,7 @@
                   </div>
                 </div>
 
-                <div class="bk-row">
+                <div class="bk-row bk-row-3">
                   <div class="bk-field">
                     <label class="bk-label" for="bk-adults">Adults <span class="bk-req">*</span></label>
                     <div class="icon-wrapper">
@@ -430,6 +430,17 @@
                     </div>
                     <p class="bk-hint"><span data-price-child>₱700</span> each —
                       <span data-child-ages>7 to 12 years old</span></p>
+                  </div>
+
+                  <div class="bk-field">
+                    <label class="bk-label" for="bk-infants">Little ones</label>
+                    <div class="icon-wrapper">
+                      <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
+                      <select id="bk-infants" name="infants" class="input-field"></select>
+                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </div>
+                    <p class="bk-hint"><strong class="bk-free">Free</strong> —
+                      <span data-infant-ages>under 7 — free</span></p>
                   </div>
                 </div>
 
@@ -631,6 +642,10 @@
                 <div class="bk-sum-row" data-sum-children-row hidden>
                   <span>Children <em data-sum-children-qty>× 0</em></span>
                   <span data-sum-children-total>₱0</span>
+                </div>
+                <div class="bk-sum-row" data-sum-infants-row hidden>
+                  <span>Under 7 <em data-sum-infants-qty>× 0</em></span>
+                  <span class="bk-free">Free</span>
                 </div>
                 <div class="bk-sum-row bk-sum-total">
                   <span>Total</span>

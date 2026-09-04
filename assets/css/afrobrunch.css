@@ -245,6 +245,13 @@
 
 .bk-row { display: grid; gap: 22px; }
 
+.bk-free {
+  color: var(--afro-green);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letterSpacing-1);
+}
+
 .input-field.is-invalid { border-color: var(--afro-danger); }
 
 .bk-error {
@@ -852,6 +859,9 @@
 
   .bk-row { grid-template-columns: 1fr 1fr; }
 
+  /* adultes / enfants / moins de 7 ans : deux colonnes ici, trois plus bas */
+  .bk-row-3 { grid-template-columns: 1fr 1fr; }
+
   .bk-step-label { display: block; }
 
   .hw-list { grid-template-columns: repeat(2, 1fr); }
@@ -862,6 +872,8 @@
 @media (min-width: 768px) {
 
   .bk-main { padding: 44px 40px 50px; }
+
+  .bk-row-3 { grid-template-columns: repeat(3, 1fr); }
 
   .bk-qr-wrap { grid-template-columns: 280px 1fr; }
 

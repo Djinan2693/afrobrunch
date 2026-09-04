@@ -121,9 +121,10 @@
     html += line('Name', b.name);
 
     /* on detaille adultes / enfants seulement si l'information existe */
-    if (b.adults || b.children) {
+    if (b.adults || b.children || b.infants) {
       html += line('Adults', b.adults);
       if (b.children) html += line('Children', b.children);
+      if (b.infants) html += line('Under 7 (free)', b.infants);
     }
     html += line('Tickets', b.qty);
 

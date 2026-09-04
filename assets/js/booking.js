@@ -49,6 +49,7 @@
     phone: '',
     adults: 1,
     children: 0,
+    infants: 0,
     notes: '',
     method: 'gcash',
     payRef: '',
@@ -76,6 +77,7 @@
 
   var adultSelect = $('#bk-adults');
   var childSelect = $('#bk-children');
+  var infantSelect = $('#bk-infants');
 
   /* Les adultes demarrent a 1 (on ne reserve pas pour zero adulte par defaut),
      les enfants a 0. Les deux peuvent descendre a 0 : une famille peut tres
@@ -91,8 +93,10 @@
 
   fillSelect(adultSelect, 0, MAX, 'adult', 'adults');
   fillSelect(childSelect, 0, MAX, 'child', 'children');
+  fillSelect(infantSelect, 0, MAX, 'child', 'children');
   adultSelect.value = '1';
   childSelect.value = '0';
+  infantSelect.value = '0';
 
   var totals = function () {
     var adults = state.adults * PRICE_ADULT;
@@ -115,25 +119,32 @@
     setText('[data-sum-children-qty]', '× ' + state.children);
     setText('[data-sum-children-total]', money(t.children));
 
+    setText('[data-sum-infants-qty]', '× ' + state.infants);
+
     var adultsRow = $('[data-sum-adults-row]');
     var childrenRow = $('[data-sum-children-row]');
+    var infantsRow = $('[data-sum-infants-row]');
     if (adultsRow) adultsRow.hidden = state.adults === 0;
     if (childrenRow) childrenRow.hidden = state.children === 0;
+    if (infantsRow) infantsRow.hidden = state.infants === 0;
   };
 
   var readQuantities = function () {
     state.adults = Number(adultSelect.value) || 0;
     state.children = Number(childSelect.value) || 0;
+    state.infants = Number(infantSelect.value) || 0;
     refreshTotals();
   };
 
   adultSelect.addEventListener('change', readQuantities);
   childSelect.addEventListener('change', readQuantities);
+  infantSelect.addEventListener('change', readQuantities);
 
   /* rappel des tarifs sous chaque selecteur */
   setText('[data-price-adult]', money(PRICE_ADULT));
   setText('[data-price-child]', money(PRICE_CHILD));
   if (CFG.CHILD_AGES) setText('[data-child-ages]', CFG.CHILD_AGES);
+  if (CFG.INFANT_AGES) setText('[data-infant-ages]', CFG.INFANT_AGES);
 
   /* ------------------------------------------------------------- navigation */
 
@@ -198,7 +209,8 @@
     readQuantities();
 
     if (state.adults + state.children < 1) {
-      showError(1, 'Please choose at least one ticket.');
+      showError(1, 'Please choose at least one paying ticket — under 7s are free but ' +
+        'cannot be booked on their own.');
       adultSelect.focus();
       return false;
     }
@@ -361,7 +373,9 @@
       phone: state.phone,
       adults: state.adults,
       children: state.children,
+      infants: state.infants,
       qty: state.adults + state.children,
+      guests: state.adults + state.children + state.infants,
       priceAdult: PRICE_ADULT,
       priceChild: PRICE_CHILD,
       notes: state.notes,

@@ -25,6 +25,7 @@ window.AFRO_CONFIG = {
   PRICE_ADULT: 1700,
   PRICE_CHILD: 700,
   CHILD_AGES: '7 to 12 years old',
+  INFANT_AGES: 'under 7 — free',
   MAX_TICKETS: 10,
 
   /* ---- Evenement ---- */

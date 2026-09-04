@@ -55,6 +55,7 @@ var CONFIG = {
   PRICE_ADULT: 1700,
   PRICE_CHILD: 700,
   CHILD_AGES: '7 to 12 years old',
+  INFANT_AGES: 'under 7',
   MAX_TICKETS: 10,
 
   EVENT: {
@@ -79,14 +80,16 @@ var CONFIG = {
 
 var HEADERS = [
   'Timestamp', 'Reference', 'Status', 'Name', 'Email', 'Phone',
-  'Adults', 'Children', 'Tickets', 'Amount', 'Method', 'Payment ref',
-  'Proof', 'Notes', 'Validated at', 'Validated by', 'Checked in at'
+  'Adults', 'Children', 'Under 7', 'Tickets', 'Guests', 'Amount',
+  'Method', 'Payment ref', 'Proof', 'Notes',
+  'Validated at', 'Validated by', 'Checked in at'
 ];
 
 var COL = {
   timestamp: 1, ref: 2, status: 3, name: 4, email: 5, phone: 6,
-  adults: 7, children: 8, tickets: 9, amount: 10, method: 11, payRef: 12,
-  proof: 13, notes: 14, validatedAt: 15, validatedBy: 16, checkedInAt: 17
+  adults: 7, children: 8, infants: 9, tickets: 10, guests: 11, amount: 12,
+  method: 13, payRef: 14, proof: 15, notes: 16,
+  validatedAt: 17, validatedBy: 18, checkedInAt: 19
 };
 
 var GOLD = '#D9B871';
@@ -170,14 +173,16 @@ function createBooking_(p) {
 
   var adults = clampCount_(p.adults);
   var children = clampCount_(p.children);
-  var qty = adults + children;
+  var infants = clampCount_(p.infants);   /* moins de 7 ans : gratuits */
+  var qty = adults + children;            /* billets payants */
+  var guests = qty + infants;             /* convives a table */
 
   if (!name || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/)) {
     return { ok: false, error: 'Name and a valid email address are required.' };
   }
 
   if (qty < 1) {
-    return { ok: false, error: 'At least one ticket is required.' };
+    return { ok: false, error: 'At least one paying ticket is required.' };
   }
 
   var lock = LockService.getScriptLock();
@@ -205,7 +210,9 @@ function createBooking_(p) {
       String(p.phone || ''),
       adults,
       children,
+      infants,
       qty,
+      guests,
       amount,
       String(p.methodLabel || p.method || ''),
       String(p.payRef || ''),
@@ -216,7 +223,8 @@ function createBooking_(p) {
 
     var booking = {
       ref: ref, name: name, email: email, phone: String(p.phone || ''),
-      adults: adults, children: children, qty: qty, amount: amount,
+      adults: adults, children: children, infants: infants,
+      qty: qty, guests: guests, amount: amount,
       method: String(p.methodLabel || p.method || ''),
       payRef: String(p.payRef || ''), notes: String(p.notes || '')
     };
@@ -334,14 +342,15 @@ function addToGuestList_(booking) {
 
   if (!sheet) {
     sheet = ss.insertSheet(CONFIG.GUEST_SHEET_NAME);
-    sheet.appendRow(['Reservation', 'Name', 'Adults', 'Children', 'Tickets',
-      'Email', 'Phone', 'Confirmed at', 'Notes', 'Checked in at']);
-    sheet.getRange(1, 1, 1, 10).setFontWeight('bold');
+    sheet.appendRow(['Reservation', 'Name', 'Adults', 'Children', 'Under 7',
+      'Guests', 'Email', 'Phone', 'Confirmed at', 'Notes', 'Checked in at']);
+    sheet.getRange(1, 1, 1, 11).setFontWeight('bold');
     sheet.setFrozenRows(1);
   }
 
   sheet.appendRow([booking.ref, booking.name, booking.adults, booking.children,
-    booking.qty, booking.email, booking.phone, now_(), booking.notes, '']);
+    booking.infants, booking.guests, booking.email, booking.phone, now_(),
+    booking.notes, '']);
 }
 
 
@@ -367,6 +376,7 @@ function lookup_(ref) {
     qty: booking.qty,
     adults: booking.adults,
     children: booking.children,
+    infants: booking.infants,
     status: booking.status,
     confirmedAt: booking.status === 'CONFIRMED' ? booking.validatedAt : '',
     checkedIn: !!booking.checkedInAt,
@@ -429,6 +439,7 @@ function find_(p) {
       qty: Number(row[COL.tickets - 1]) || 0,
       adults: Number(row[COL.adults - 1]) || 0,
       children: Number(row[COL.children - 1]) || 0,
+      infants: Number(row[COL.infants - 1]) || 0,
       status: status,
       confirmedAt: status === 'CONFIRMED' ? validatedAt : '',
       checkedIn: !!checkedInAt,
@@ -479,7 +490,7 @@ function markGuestListCheckIn_(ref) {
 
   var found = sheet.getRange(1, 1, sheet.getLastRow(), 1).createTextFinder(ref)
     .matchEntireCell(true).findNext();
-  if (found) sheet.getRange(found.getRow(), 10).setValue(now_());
+  if (found) sheet.getRange(found.getRow(), 11).setValue(now_());
 }
 
 
@@ -667,7 +678,8 @@ function detailsTable_(b) {
     ['Name', b.name],
     ['Adults', b.adults + ' × ' + money_(CONFIG.PRICE_ADULT)],
     ['Children (' + CONFIG.CHILD_AGES + ')', b.children + ' × ' + money_(CONFIG.PRICE_CHILD)],
-    ['Tickets', String(b.qty)],
+    ['Under 7 (free)', String(b.infants || 0)],
+    ['People at the table', String(b.guests || b.qty)],
     ['Amount', money_(b.amount)],
     ['Email', b.email],
     ['Phone', b.phone],
@@ -786,7 +798,9 @@ function readRow_(sheet, row) {
     phone: String(values[COL.phone - 1]),
     adults: Number(values[COL.adults - 1]) || 0,
     children: Number(values[COL.children - 1]) || 0,
+    infants: Number(values[COL.infants - 1]) || 0,
     qty: Number(values[COL.tickets - 1]) || 1,
+    guests: Number(values[COL.guests - 1]) || 0,
     amount: Number(values[COL.amount - 1]) || 0,
     method: String(values[COL.method - 1]),
     payRef: String(values[COL.payRef - 1]),
@@ -928,7 +942,9 @@ function sendTestEmail() {
     phone: CONFIG.CONTACT.phone1,
     adults: 2,
     children: 1,
+    infants: 1,
     qty: 3,
+    guests: 4,
     amount: 2 * CONFIG.PRICE_ADULT + CONFIG.PRICE_CHILD,
     method: 'GCash',
     payRef: '1234567890',

@@ -166,11 +166,18 @@ pensez à les changer aux deux endroits si vous ajustez les prix :
 | | Tarif | Réglage |
 |---|---|---|
 | Adulte | ₱1 700 | `PRICE_ADULT` |
-| Enfant | ₱700 | `PRICE_CHILD` — tranche d'âge affichée : `CHILD_AGES` |
+| Enfant 7–12 ans | ₱700 | `PRICE_CHILD` — libellé : `CHILD_AGES` |
+| Moins de 7 ans | **gratuit** | comptés mais jamais facturés — libellé : `INFANT_AGES` |
 
 Le montant à payer est **toujours recalculé par le serveur** à partir du nombre
 d'adultes et d'enfants : ce que le navigateur annonce n'est jamais pris pour argent
 comptant.
+
+Les moins de 7 ans sont saisis dans le formulaire mais coûtent ₱0. On les compte
+quand même, car ils mangent et occupent une place : la feuille distingue
+**Tickets** (billets payants) de **Guests** (personnes réellement à table). Une
+réservation composée uniquement de moins de 7 ans est refusée — il faut au moins
+un billet payant.
 
 ---
 
