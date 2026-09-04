@@ -572,19 +572,14 @@ function mailOrganizer_(b, proofFile) {
 function mailBuyerConfirmed_(b) {
 
   var verifyUrl = CONFIG.SITE_URL + 'verify.html?ref=' + encodeURIComponent(b.ref);
-  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data=' +
-    encodeURIComponent(verifyUrl);
-
   var body = emailShell_(
     'You’re in — see you on the 27th',
     'Payment confirmed for <strong>' + esc_(b.name) + '</strong> · ' + b.qty + ' ticket(s).',
 
     refBox_('Your reservation number', b.ref) +
 
-    '<p style="margin:0 0 22px;text-align:center;">' +
-    '<img src="' + qrUrl + '" width="240" height="240" alt="Reservation QR code" ' +
-    'style="border-radius:12px;background:#fff;padding:8px;"><br>' +
-    '<span style="font-size:12px;color:#9b9186;">Show this number or QR code at the door.</span></p>' +
+    '<p style="margin:0 0 22px;text-align:center;font-size:14px;color:#9b9186;">' +
+    'Give this number at the door &mdash; our team will look it up.</p>' +
 
     detailsTable_(b) +
 

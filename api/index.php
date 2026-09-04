@@ -368,8 +368,6 @@ function mail_organizer(array $b, ?string $proofPath): void
 function mail_buyer_confirmed(array $b): void
 {
     $verifyUrl = cfg('site_url') . 'verify.html?ref=' . rawurlencode($b['ref']);
-    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data='
-        . rawurlencode($verifyUrl);
     $e = cfg('event');
 
     $body = email_shell(
@@ -377,11 +375,9 @@ function mail_buyer_confirmed(array $b): void
         'Payment confirmed for <strong>' . esc($b['name']) . '</strong> &middot; '
             . (int) $b['tickets'] . ' ticket(s).',
         ref_box('Your reservation number', $b['ref'])
-            . '<p style="margin:0 0 22px;text-align:center;">'
-            . '<img src="' . esc($qrUrl) . '" width="240" height="240" alt="Reservation QR code" '
-            . 'style="border-radius:12px;background:#fff;padding:8px;"><br>'
-            . '<span style="font-size:12px;color:#9b9186;">Show this number or QR code at the '
-            . 'door.</span></p>'
+            . '<p style="margin:0 0 22px;text-align:center;font-size:14px;color:#9b9186;">'
+            . 'Give this number at the door &mdash; our team will look it up. '
+            . 'No ticket to print, no code to scan.</p>'
             . details_table($b)
             . '<p style="margin:24px 0 12px;font-size:13px;letter-spacing:2px;'
             . 'text-transform:uppercase;color:' . GOLD . ';">Where &amp; when</p>'
