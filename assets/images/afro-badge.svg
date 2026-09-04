@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 134 134" width="134" height="134" role="img"
+  aria-label="September 27, 2026">
+  <circle cx="67" cy="67" r="45" fill="#14100B"/>
+  <circle cx="67" cy="67" r="45" fill="none" stroke="#D9B871" stroke-width="1.5"/>
+  <circle cx="67" cy="67" r="40" fill="none" stroke="#D9B871" stroke-width="0.6" opacity="0.45"/>
+  <text x="68.5" y="55" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif"
+    font-size="9" font-weight="bold" letter-spacing="3" fill="#D9B871">SEPT</text>
+  <text x="67" y="82" text-anchor="middle" font-family="Georgia,Times New Roman,serif"
+    font-size="30" fill="#FFFFFF">27</text>
+  <text x="68.5" y="96" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif"
+    font-size="9" font-weight="bold" letter-spacing="3" fill="#D9B871">2026</text>
+</svg>

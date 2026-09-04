@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 134 134" width="134" height="134" aria-hidden="true">
+  <defs>
+    <path id="afroRing" fill="none"
+      d="M67,67 m-60,0 a60,60 0 1,1 120,0 a60,60 0 1,1 -120,0"/>
+  </defs>
+  <circle cx="67" cy="67" r="66" fill="none" stroke="#D9B871" stroke-width="0.8" opacity="0.35"/>
+  <circle cx="67" cy="67" r="52" fill="none" stroke="#D9B871" stroke-width="0.8" opacity="0.35"/>
+  <text font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-size="10" font-weight="bold"
+    letter-spacing="2.2" fill="#D9B871">
+    <textPath href="#afroRing" xlink:href="#afroRing" startOffset="2%">
+      GOOD FOOD · GOOD MUSIC · GOOD VIBES ·
+    </textPath>
+  </text>
+</svg>

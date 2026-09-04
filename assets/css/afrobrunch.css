@@ -68,6 +68,10 @@
 
 .about .section-text + .section-text { margin-block-start: 18px; }
 
+/* l'anneau tournant du template annoncait "FRESH ENVIRONMENT / QUALITY FOOD" :
+   on lui substitue la signature Afro Brunch */
+.about .abs-img-2::before { background-image: url('../images/afro-badge-ring.svg'); }
+
 /* la photo du chef (abs-img-1) a ete retiree : on recupere le decalage a gauche
    et l'espace qu'elle occupait sous le visuel */
 .about-banner { margin-block-end: 40px; }
