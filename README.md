@@ -158,6 +158,38 @@ L'onglet **Guest list** du classeur est la liste à imprimer en secours.
 
 ---
 
+## Production — ce qui est en place
+
+Le site est en ligne sur **https://afrobrunch.online** (hébergement cPanel, compte
+`afrobrunch`, serveur `45.67.139.10` / `s23.srv-console.com`).
+
+Déploiement d'une mise à jour :
+
+```bash
+./deploy.sh
+```
+
+Le script n'envoie que les fichiers réellement référencés par le site. Le jeton API
+est lu dans `.cpanel-token`, **exclu du dépôt** — ce dépôt est public, aucune
+credential ne doit y figurer.
+
+### DNS et messagerie
+
+| Élément | Valeur | Rôle |
+|---|---|---|
+| Serveurs de noms | `ns3.yottasrc.com`, `ns4.yottasrc.com` | les `*.h-goldh.com` pointaient vers 127.0.0.1 et cassaient tout le domaine |
+| A / www | `45.67.139.10` | le site |
+| MX | `mx.zoho.com` 10, `mx2` 20, `mx3` 50 | la messagerie chez Zoho |
+| SPF | `v=spf1 +a +mx +ip4:45.67.139.10 include:zoho.com include:relay.mailchannels.net ~all` | autorise Zoho **et** le serveur cPanel |
+| DKIM | `zmail._domainkey` | signature Zoho |
+| DMARC | `_dmarc` : `p=none` | à resserrer en `quarantine` une fois les envois vérifiés |
+
+Le domaine est en **Remote Mail Exchanger** dans cPanel : sans ce réglage, cPanel
+continuerait de livrer le courrier localement malgré les MX Zoho, et rien
+n'arriverait dans les boîtes Zoho.
+
+---
+
 ## Tarifs
 
 Les deux tarifs sont dans `assets/js/config.js` **et** dans `apps-script/Code.gs` —
