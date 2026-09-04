@@ -412,19 +412,31 @@
 
                 <div class="bk-row">
                   <div class="bk-field">
-                    <label class="bk-label" for="bk-qty">Number of tickets <span class="bk-req">*</span></label>
+                    <label class="bk-label" for="bk-adults">Adults <span class="bk-req">*</span></label>
                     <div class="icon-wrapper">
-                      <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
-                      <select id="bk-qty" name="qty" class="input-field"></select>
+                      <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+                      <select id="bk-adults" name="adults" class="input-field"></select>
                       <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
                     </div>
+                    <p class="bk-hint"><span data-price-adult>₱1,700</span> each</p>
                   </div>
 
                   <div class="bk-field">
-                    <label class="bk-label" for="bk-notes">Allergies or notes</label>
-                    <input type="text" id="bk-notes" name="notes" class="input-field"
-                      placeholder="Optional — e.g. no peanuts, 1 child">
+                    <label class="bk-label" for="bk-children">Children</label>
+                    <div class="icon-wrapper">
+                      <ion-icon name="happy-outline" aria-hidden="true"></ion-icon>
+                      <select id="bk-children" name="children" class="input-field"></select>
+                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </div>
+                    <p class="bk-hint"><span data-price-child>₱700</span> each —
+                      <span data-child-ages>7 to 12 years old</span></p>
                   </div>
+                </div>
+
+                <div class="bk-field">
+                  <label class="bk-label" for="bk-notes">Allergies or notes</label>
+                  <input type="text" id="bk-notes" name="notes" class="input-field"
+                    placeholder="Optional — e.g. no peanuts, high chair needed">
                 </div>
 
                 <p class="bk-error" data-error-for="1" hidden></p>
@@ -612,13 +624,13 @@
 
                 <div class="separator"></div>
 
-                <div class="bk-sum-row">
-                  <span>Ticket</span>
-                  <span>₱1,700</span>
+                <div class="bk-sum-row" data-sum-adults-row>
+                  <span>Adults <em data-sum-adults-qty>× 1</em></span>
+                  <span data-sum-adults-total>₱1,700</span>
                 </div>
-                <div class="bk-sum-row">
-                  <span>Quantity</span>
-                  <span data-sum-qty>× 1</span>
+                <div class="bk-sum-row" data-sum-children-row hidden>
+                  <span>Children <em data-sum-children-qty>× 0</em></span>
+                  <span data-sum-children-total>₱0</span>
                 </div>
                 <div class="bk-sum-row bk-sum-total">
                   <span>Total</span>

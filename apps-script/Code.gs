@@ -52,7 +52,9 @@ var CONFIG = {
 
   TIMEZONE: 'Asia/Manila',
   CURRENCY_SYMBOL: '₱',
-  PRICE: 1700,
+  PRICE_ADULT: 1700,
+  PRICE_CHILD: 700,
+  CHILD_AGES: '7 to 12 years old',
   MAX_TICKETS: 10,
 
   EVENT: {
@@ -76,15 +78,15 @@ var CONFIG = {
  * ========================================================================== */
 
 var HEADERS = [
-  'Timestamp', 'Reference', 'Status', 'Name', 'Email', 'Phone', 'Tickets',
-  'Amount', 'Method', 'Payment ref', 'Proof', 'Notes',
-  'Validated at', 'Validated by', 'Checked in at'
+  'Timestamp', 'Reference', 'Status', 'Name', 'Email', 'Phone',
+  'Adults', 'Children', 'Tickets', 'Amount', 'Method', 'Payment ref',
+  'Proof', 'Notes', 'Validated at', 'Validated by', 'Checked in at'
 ];
 
 var COL = {
-  timestamp: 1, ref: 2, status: 3, name: 4, email: 5, phone: 6, tickets: 7,
-  amount: 8, method: 9, payRef: 10, proof: 11, notes: 12,
-  validatedAt: 13, validatedBy: 14, checkedInAt: 15
+  timestamp: 1, ref: 2, status: 3, name: 4, email: 5, phone: 6,
+  adults: 7, children: 8, tickets: 9, amount: 10, method: 11, payRef: 12,
+  proof: 13, notes: 14, validatedAt: 15, validatedBy: 16, checkedInAt: 17
 };
 
 var GOLD = '#D9B871';
@@ -135,6 +137,10 @@ function doGet(e) {
       return jsonOut_(lookup_(p.ref), p.callback);
     }
 
+    if (action === 'find') {
+      return jsonOut_(find_(p), p.callback);
+    }
+
     if (action === 'checkin') {
       return jsonOut_(checkIn_(p.ref, p.staff), p.callback);
     }
@@ -161,10 +167,17 @@ function createBooking_(p) {
 
   var name = String(p.name || '').trim();
   var email = String(p.email || '').trim();
-  var qty = Math.max(1, Math.min(CONFIG.MAX_TICKETS, parseInt(p.qty, 10) || 1));
+
+  var adults = clampCount_(p.adults);
+  var children = clampCount_(p.children);
+  var qty = adults + children;
 
   if (!name || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/)) {
     return { ok: false, error: 'Name and a valid email address are required.' };
+  }
+
+  if (qty < 1) {
+    return { ok: false, error: 'At least one ticket is required.' };
   }
 
   var lock = LockService.getScriptLock();
@@ -178,7 +191,9 @@ function createBooking_(p) {
     var ref = normalizeRef_(p.ref);
     if (!ref || findRow_(sheet, ref) > 0) ref = uniqueRef_(sheet);
 
-    var amount = qty * CONFIG.PRICE;
+    /* Le montant est toujours recalcule cote serveur : ce que le navigateur
+       annonce n'est qu'indicatif et ne doit jamais faire foi. */
+    var amount = adults * CONFIG.PRICE_ADULT + children * CONFIG.PRICE_CHILD;
     var proofFile = saveProof_(p.proof, ref, name);
 
     sheet.appendRow([
@@ -188,6 +203,8 @@ function createBooking_(p) {
       name,
       email,
       String(p.phone || ''),
+      adults,
+      children,
       qty,
       amount,
       String(p.methodLabel || p.method || ''),
@@ -199,7 +216,8 @@ function createBooking_(p) {
 
     var booking = {
       ref: ref, name: name, email: email, phone: String(p.phone || ''),
-      qty: qty, amount: amount, method: String(p.methodLabel || p.method || ''),
+      adults: adults, children: children, qty: qty, amount: amount,
+      method: String(p.methodLabel || p.method || ''),
       payRef: String(p.payRef || ''), notes: String(p.notes || '')
     };
 
@@ -316,14 +334,14 @@ function addToGuestList_(booking) {
 
   if (!sheet) {
     sheet = ss.insertSheet(CONFIG.GUEST_SHEET_NAME);
-    sheet.appendRow(['Reservation', 'Name', 'Tickets', 'Email', 'Phone',
-      'Confirmed at', 'Notes', 'Checked in at']);
-    sheet.getRange(1, 1, 1, 8).setFontWeight('bold');
+    sheet.appendRow(['Reservation', 'Name', 'Adults', 'Children', 'Tickets',
+      'Email', 'Phone', 'Confirmed at', 'Notes', 'Checked in at']);
+    sheet.getRange(1, 1, 1, 10).setFontWeight('bold');
     sheet.setFrozenRows(1);
   }
 
-  sheet.appendRow([booking.ref, booking.name, booking.qty, booking.email,
-    booking.phone, now_(), booking.notes, '']);
+  sheet.appendRow([booking.ref, booking.name, booking.adults, booking.children,
+    booking.qty, booking.email, booking.phone, now_(), booking.notes, '']);
 }
 
 
@@ -347,11 +365,78 @@ function lookup_(ref) {
     ref: booking.ref,
     name: booking.name,
     qty: booking.qty,
+    adults: booking.adults,
+    children: booking.children,
     status: booking.status,
     confirmedAt: booking.status === 'CONFIRMED' ? booking.validatedAt : '',
     checkedIn: !!booking.checkedInAt,
     checkedInAt: booking.checkedInAt
   };
+}
+
+
+/**
+ * Retrouve les reservations d'une personne qui a perdu son numero.
+ *
+ * Pour le public, l'adresse email est obligatoire et doit correspondre
+ * exactement : sans cela, n'importe qui pourrait parcourir la liste des
+ * invites en tapant des noms au hasard. Le nom sert alors de filtre
+ * supplementaire facultatif.
+ *
+ * En mode staff (cle valide), la recherche par nom seul est autorisee, car
+ * c'est exactement ce dont on a besoin a l'entree le jour J.
+ */
+function find_(p) {
+
+  var email = String(p.email || '').trim().toLowerCase();
+  var name = String(p.name || '').trim().toLowerCase();
+  var isStaff = !!p.staff && p.staff === CONFIG.STAFF_KEY;
+
+  if (!email && !(isStaff && name)) {
+    return { ok: false, error: 'Please enter the email address used for the booking.' };
+  }
+
+  var sheet = getSheet_();
+  var last = sheet.getLastRow();
+  if (last < 2) return { ok: true, count: 0, results: [] };
+
+  var values = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
+  var results = [];
+
+  /* de la reservation la plus recente a la plus ancienne */
+  for (var i = values.length - 1; i >= 0 && results.length < 20; i--) {
+    var row = values[i];
+    var rowEmail = String(row[COL.email - 1]).trim().toLowerCase();
+    var rowName = String(row[COL.name - 1]).trim().toLowerCase();
+
+    var match;
+    if (email) {
+      match = (rowEmail === email);
+      if (match && name) match = rowName.indexOf(name) > -1;
+    } else {
+      match = rowName.indexOf(name) > -1;
+    }
+
+    if (!match) continue;
+
+    var checkedInAt = row[COL.checkedInAt - 1] ? String(row[COL.checkedInAt - 1]) : '';
+    var validatedAt = row[COL.validatedAt - 1] ? String(row[COL.validatedAt - 1]) : '';
+    var status = String(row[COL.status - 1]);
+
+    results.push({
+      ref: String(row[COL.ref - 1]),
+      name: String(row[COL.name - 1]),
+      qty: Number(row[COL.tickets - 1]) || 0,
+      adults: Number(row[COL.adults - 1]) || 0,
+      children: Number(row[COL.children - 1]) || 0,
+      status: status,
+      confirmedAt: status === 'CONFIRMED' ? validatedAt : '',
+      checkedIn: !!checkedInAt,
+      checkedInAt: checkedInAt
+    });
+  }
+
+  return { ok: true, count: results.length, results: results };
 }
 
 
@@ -394,7 +479,7 @@ function markGuestListCheckIn_(ref) {
 
   var found = sheet.getRange(1, 1, sheet.getLastRow(), 1).createTextFinder(ref)
     .matchEntireCell(true).findNext();
-  if (found) sheet.getRange(found.getRow(), 8).setValue(now_());
+  if (found) sheet.getRange(found.getRow(), 10).setValue(now_());
 }
 
 
@@ -580,6 +665,8 @@ function refBox_(label, ref) {
 function detailsTable_(b) {
   var rows = [
     ['Name', b.name],
+    ['Adults', b.adults + ' × ' + money_(CONFIG.PRICE_ADULT)],
+    ['Children (' + CONFIG.CHILD_AGES + ')', b.children + ' × ' + money_(CONFIG.PRICE_CHILD)],
     ['Tickets', String(b.qty)],
     ['Amount', money_(b.amount)],
     ['Email', b.email],
@@ -697,6 +784,8 @@ function readRow_(sheet, row) {
     name: String(values[COL.name - 1]),
     email: String(values[COL.email - 1]),
     phone: String(values[COL.phone - 1]),
+    adults: Number(values[COL.adults - 1]) || 0,
+    children: Number(values[COL.children - 1]) || 0,
     qty: Number(values[COL.tickets - 1]) || 1,
     amount: Number(values[COL.amount - 1]) || 0,
     method: String(values[COL.method - 1]),
@@ -720,6 +809,14 @@ function uniqueRef_(sheet) {
     if (findRow_(sheet, ref) < 1) return ref;
   }
   return 'AB26-' + Date.now().toString(36).toUpperCase();
+}
+
+
+/** Ramene un nombre de billets envoye par le navigateur dans [0, MAX_TICKETS]. */
+function clampCount_(value) {
+  var n = parseInt(value, 10);
+  if (isNaN(n) || n < 0) return 0;
+  return Math.min(CONFIG.MAX_TICKETS, n);
 }
 
 
@@ -829,8 +926,10 @@ function sendTestEmail() {
     name: 'Test Guest',
     email: firstOrganizer_(),
     phone: CONFIG.CONTACT.phone1,
-    qty: 2,
-    amount: 2 * CONFIG.PRICE,
+    adults: 2,
+    children: 1,
+    qty: 3,
+    amount: 2 * CONFIG.PRICE_ADULT + CONFIG.PRICE_CHILD,
     method: 'GCash',
     payRef: '1234567890',
     notes: 'Ceci est un test.'

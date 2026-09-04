@@ -46,7 +46,7 @@ Base graphique : template [Grilli](https://github.com/codewithsadee/grilli) (MIT
 |---|---|
 | `index.html` | La landing page + le tunnel de réservation en 4 étapes |
 | `verify.html` | Vérification d'un numéro de réservation (public + mode staff) |
-| `assets/js/config.js` | **Le seul fichier à modifier côté site** (2 lignes) |
+| `assets/js/config.js` | **Le seul fichier à modifier côté site** — API, tarifs adulte/enfant, contacts |
 | `assets/js/booking.js` | Logique du tunnel : étapes, QR, compression de la capture, envoi |
 | `assets/js/verify.js` | Interrogation du serveur pour vérifier un numéro |
 | `assets/css/afrobrunch.css` | Surcouche graphique Afro Brunch (le template n'est pas modifié) |
@@ -144,12 +144,33 @@ Ouvrez sur le téléphone de la personne à l'entrée :
 https://djinan2693.github.io/afrobrunch/verify.html?staff=VOTRE_STAFF_KEY
 ```
 
-Chaque numéro saisi affiche le nom, le nombre de places et le statut.
+Chaque numéro saisi affiche le nom, le détail adultes / enfants et le statut.
 Un bouton **Mark as checked in** apparaît pour pointer l'arrivée : l'heure est
 inscrite dans le Sheet, et un invité déjà pointé est signalé
 (*Already checked in*) — ce qui empêche qu'un même numéro serve deux fois.
 
+En mode staff, l'onglet **I lost my number** accepte aussi la **recherche par nom
+seul** (même partiel) : pratique quand quelqu'un se présente sans rien. Pour le
+public, en revanche, l'adresse email est obligatoire — sinon n'importe qui
+pourrait parcourir votre liste d'invités en tapant des noms au hasard.
+
 L'onglet **Guest list** du classeur est la liste à imprimer en secours.
+
+---
+
+## Tarifs
+
+Les deux tarifs sont dans `assets/js/config.js` **et** dans `apps-script/Code.gs` —
+pensez à les changer aux deux endroits si vous ajustez les prix :
+
+| | Tarif | Réglage |
+|---|---|---|
+| Adulte | ₱1 700 | `PRICE_ADULT` |
+| Enfant | ₱700 | `PRICE_CHILD` — tranche d'âge affichée : `CHILD_AGES` |
+
+Le montant à payer est **toujours recalculé par le serveur** à partir du nombre
+d'adultes et d'enfants : ce que le navigateur annonce n'est jamais pris pour argent
+comptant.
 
 ---
 
@@ -167,6 +188,10 @@ L'onglet **Guest list** du classeur est la liste à imprimer en secours.
   emails. Si Gmail échoue, la demande est quand même dans le classeur et peut être
   traitée à la main (changez `Status` en `CONFIRMED`).
 - **Modifier un statut à la main** dans le Sheet fonctionne, mais n'envoie aucun email.
+- **Si vous aviez déjà lancé une version précédente**, la feuille `Reservations`
+  contient les anciennes colonnes (sans *Adults* ni *Children*). Supprimez l'onglet
+  et relancez `setup` : il sera recréé avec la bonne structure. Sans cela, les
+  colonnes seront décalées.
 
 ---
 

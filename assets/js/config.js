@@ -18,10 +18,13 @@ window.AFRO_CONFIG = {
   /* Adresse publique du site sur GitHub Pages. */
   SITE_URL: 'https://djinan2693.github.io/afrobrunch/',
 
-  /* ---- Billet ---- */
+  /* ---- Billets ----
+     MAX_TICKETS s'applique separement aux adultes et aux enfants. */
   CURRENCY: 'PHP',
   CURRENCY_SYMBOL: '₱',
-  PRICE: 1700,
+  PRICE_ADULT: 1700,
+  PRICE_CHILD: 700,
+  CHILD_AGES: '7 to 12 years old',
   MAX_TICKETS: 10,
 
   /* ---- Evenement ---- */

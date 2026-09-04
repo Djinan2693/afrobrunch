@@ -34,19 +34,51 @@
       <p class="section-subtitle label-2">At The Door</p>
       <h1 class="headline-2">Check Your Reservation</h1>
 
-      <p class="vf-msg" style="margin-block-start: 16px;">
-        Enter the reservation number from your confirmation email.
+      <p class="vf-msg vf-lead">
+        Check that your seat is confirmed — or find your number again if you lost it.
       </p>
 
-      <form class="vf-form" data-verify-form>
-        <label class="bk-label" for="vf-ref" style="text-align:left;">Reservation number</label>
+      <div class="bk-tabs vf-tabs" role="tablist" aria-label="How to search">
+        <button type="button" class="bk-tab is-active" role="tab" aria-selected="true" data-mode="ref">
+          I have my number
+        </button>
+        <button type="button" class="bk-tab" role="tab" aria-selected="false" data-mode="find">
+          I lost my number
+        </button>
+      </div>
 
-        <input type="text" id="vf-ref" class="input-field" placeholder="AB26-XXXXXX" autocomplete="off"
-          spellcheck="false" maxlength="14" required>
+      <!-- recherche par numero de reservation -->
+      <form class="vf-form" data-verify-form data-panel="ref">
+        <label class="bk-label" for="vf-ref">Reservation number</label>
+
+        <input type="text" id="vf-ref" class="input-field vf-ref-input" placeholder="AB26-XXXXXX"
+          autocomplete="off" spellcheck="false" maxlength="14">
 
         <button type="submit" class="btn btn-secondary">
           <span class="text text-1">Check</span>
           <span class="text text-2" aria-hidden="true">Check</span>
+        </button>
+      </form>
+
+      <!-- recherche par email (et par nom en mode staff) -->
+      <form class="vf-form" data-find-form data-panel="find" hidden>
+        <label class="bk-label" for="vf-email">Email address <span class="bk-req">*</span></label>
+
+        <input type="email" id="vf-email" class="input-field" placeholder="the email you booked with"
+          autocomplete="email" spellcheck="false">
+
+        <label class="bk-label" for="vf-name">Name on the booking</label>
+
+        <input type="text" id="vf-name" class="input-field" placeholder="optional — helps if you booked twice"
+          autocomplete="name">
+
+        <p class="bk-hint vf-hint" data-find-hint>
+          We only show bookings made with this exact email address.
+        </p>
+
+        <button type="submit" class="btn btn-secondary">
+          <span class="text text-1">Find My Booking</span>
+          <span class="text text-2" aria-hidden="true">Find My Booking</span>
         </button>
       </form>
 

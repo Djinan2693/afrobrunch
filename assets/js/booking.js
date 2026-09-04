@@ -47,7 +47,8 @@
     name: '',
     email: '',
     phone: '',
-    qty: 1,
+    adults: 1,
+    children: 0,
     notes: '',
     method: 'gcash',
     payRef: '',
@@ -69,27 +70,70 @@
 
   /* ------------------------------------------------------- quantite & total */
 
-  var qtySelect = $('#bk-qty');
-  var max = CFG.MAX_TICKETS || 10;
+  var PRICE_ADULT = CFG.PRICE_ADULT || 0;
+  var PRICE_CHILD = CFG.PRICE_CHILD || 0;
+  var MAX = CFG.MAX_TICKETS || 10;
 
-  for (var q = 1; q <= max; q++) {
-    var opt = document.createElement('option');
-    opt.value = String(q);
-    opt.textContent = q + (q > 1 ? ' tickets' : ' ticket');
-    qtySelect.appendChild(opt);
-  }
+  var adultSelect = $('#bk-adults');
+  var childSelect = $('#bk-children');
 
-  var refreshTotals = function () {
-    var total = state.qty * (CFG.PRICE || 0);
-    $$('[data-total-amount]').forEach(function (el) { el.textContent = money(total); });
-    var sumQty = $('[data-sum-qty]');
-    if (sumQty) sumQty.textContent = '× ' + state.qty;
+  /* Les adultes demarrent a 1 (on ne reserve pas pour zero adulte par defaut),
+     les enfants a 0. Les deux peuvent descendre a 0 : une famille peut tres
+     bien n'inscrire que des adultes, et le controle du total se fait plus bas. */
+  var fillSelect = function (select, from, to, singular, plural) {
+    for (var n = from; n <= to; n++) {
+      var opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = n + ' ' + (n === 1 ? singular : plural);
+      select.appendChild(opt);
+    }
   };
 
-  qtySelect.addEventListener('change', function () {
-    state.qty = Number(qtySelect.value) || 1;
+  fillSelect(adultSelect, 0, MAX, 'adult', 'adults');
+  fillSelect(childSelect, 0, MAX, 'child', 'children');
+  adultSelect.value = '1';
+  childSelect.value = '0';
+
+  var totals = function () {
+    var adults = state.adults * PRICE_ADULT;
+    var children = state.children * PRICE_CHILD;
+    return { adults: adults, children: children, total: adults + children };
+  };
+
+  var setText = function (selector, text) {
+    var el = $(selector);
+    if (el) el.textContent = text;
+  };
+
+  var refreshTotals = function () {
+    var t = totals();
+
+    $$('[data-total-amount]').forEach(function (el) { el.textContent = money(t.total); });
+
+    setText('[data-sum-adults-qty]', '× ' + state.adults);
+    setText('[data-sum-adults-total]', money(t.adults));
+    setText('[data-sum-children-qty]', '× ' + state.children);
+    setText('[data-sum-children-total]', money(t.children));
+
+    var adultsRow = $('[data-sum-adults-row]');
+    var childrenRow = $('[data-sum-children-row]');
+    if (adultsRow) adultsRow.hidden = state.adults === 0;
+    if (childrenRow) childrenRow.hidden = state.children === 0;
+  };
+
+  var readQuantities = function () {
+    state.adults = Number(adultSelect.value) || 0;
+    state.children = Number(childSelect.value) || 0;
     refreshTotals();
-  });
+  };
+
+  adultSelect.addEventListener('change', readQuantities);
+  childSelect.addEventListener('change', readQuantities);
+
+  /* rappel des tarifs sous chaque selecteur */
+  setText('[data-price-adult]', money(PRICE_ADULT));
+  setText('[data-price-child]', money(PRICE_CHILD));
+  if (CFG.CHILD_AGES) setText('[data-child-ages]', CFG.CHILD_AGES);
 
   /* ------------------------------------------------------------- navigation */
 
@@ -151,10 +195,15 @@
     state.email = email.value.trim();
     state.phone = phone.value.trim();
     state.notes = $('#bk-notes').value.trim();
-    state.qty = Number(qtySelect.value) || 1;
+    readQuantities();
+
+    if (state.adults + state.children < 1) {
+      showError(1, 'Please choose at least one ticket.');
+      adultSelect.focus();
+      return false;
+    }
 
     showError(1, '');
-    refreshTotals();
     return true;
   };
 
@@ -310,12 +359,16 @@
       name: state.name,
       email: state.email,
       phone: state.phone,
-      qty: state.qty,
+      adults: state.adults,
+      children: state.children,
+      qty: state.adults + state.children,
+      priceAdult: PRICE_ADULT,
+      priceChild: PRICE_CHILD,
       notes: state.notes,
       method: state.method,
       methodLabel: pay.label || state.method,
       payRef: state.payRef,
-      amount: state.qty * (CFG.PRICE || 0),
+      amount: totals().total,
       currency: CFG.CURRENCY || 'PHP',
       proof: state.proof ? { data: state.proof.data, mime: state.proof.mime, filename: state.proof.filename } : null,
       pageUrl: location.href
