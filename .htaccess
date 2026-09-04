@@ -1,0 +1,41 @@
+# Afro Brunch — configuration Apache
+# ---------------------------------------------------------------------------
+
+# --- HTTPS obligatoire -------------------------------------------------------
+# Les deux conditions evitent une boucle de redirection derriere un proxy :
+# on ne redirige que si la connexion n'est chiffree ni directement, ni en amont.
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# --- Compression -------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Cache navigateur --------------------------------------------------------
+# Les pages restent courtes en cache pour que vos corrections soient visibles
+# rapidement ; les images et polices, elles, ne changent presque jamais.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html                 "access plus 10 minutes"
+  ExpiresByType text/css                  "access plus 7 days"
+  ExpiresByType application/javascript    "access plus 7 days"
+  ExpiresByType image/jpeg                "access plus 30 days"
+  ExpiresByType image/png                 "access plus 30 days"
+  ExpiresByType image/svg+xml             "access plus 30 days"
+</IfModule>
+
+# --- En-tetes de securite ----------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# --- Divers ------------------------------------------------------------------
+Options -Indexes
+ErrorDocument 404 /index.html

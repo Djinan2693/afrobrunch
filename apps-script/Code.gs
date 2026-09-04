@@ -29,7 +29,7 @@ var CONFIG = {
   ORGANIZER_EMAILS: 'organisateur@example.com',
 
   /* Adresse publique du site (GitHub Pages). */
-  SITE_URL: 'https://djinan2693.github.io/afrobrunch/',
+  SITE_URL: 'https://afrobrunch.online/',
 
   /* << A REMPLIR >> Une longue phrase aleatoire, inventee par vous.
      Elle signe les liens de validation : sans elle, n'importe qui pourrait

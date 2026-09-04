@@ -16,7 +16,7 @@ window.AFRO_CONFIG = {
   API_URL: 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE',
 
   /* Adresse publique du site sur GitHub Pages. */
-  SITE_URL: 'https://djinan2693.github.io/afrobrunch/',
+  SITE_URL: 'https://afrobrunch.online/',
 
   /* ---- Billets ----
      MAX_TICKETS s'applique separement aux adultes et aux enfants. */

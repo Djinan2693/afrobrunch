@@ -103,7 +103,7 @@ Ouvrez `assets/js/config.js` et remplissez les deux lignes `<< A REMPLIR >>` :
 
 ```js
 API_URL:  'https://script.google.com/macros/s/AKfy…/exec',   // l'URL de l'étape 4
-SITE_URL: 'https://djinan2693.github.io/afrobrunch/',   // deja rempli
+SITE_URL: 'https://afrobrunch.online/',   // deja rempli
 ```
 
 ### 6. Publier sur GitHub Pages
@@ -119,7 +119,7 @@ git push -u origin main
 ```
 
 Puis sur GitHub : **Settings › Pages › Source : Deploy from a branch › `main` / `root`**.
-Le site est en ligne au bout d'une minute sur `https://djinan2693.github.io/afrobrunch/`.
+Le site est en ligne au bout d'une minute sur `https://afrobrunch.online/`.
 
 ---
 
@@ -141,7 +141,7 @@ Le site est en ligne au bout d'une minute sur `https://djinan2693.github.io/afro
 Ouvrez sur le téléphone de la personne à l'entrée :
 
 ```
-https://djinan2693.github.io/afrobrunch/verify.html?staff=VOTRE_STAFF_KEY
+https://afrobrunch.online/verify.html?staff=VOTRE_STAFF_KEY
 ```
 
 Chaque numéro saisi affiche le nom, le détail adultes / enfants et le statut.
