@@ -186,6 +186,37 @@ cp afrobrunch-config.example.php /home/<compte>/afrobrunch-config.php
 ./deploy.sh
 ```
 
+### Le Google Sheet
+
+Quand l'organisateur clique sur **Validate the payment**, le backend fait deux
+choses : il envoie au client son numéro de réservation par email, et il inscrit
+la ligne dans un Google Sheet.
+
+Le pont est un petit script Apps Script rattaché à votre feuille
+(`apps-script/SheetWebhook.gs`) — pas de compte Google Cloud ni de clé de
+service à créer. Son installation est décrite en tête du fichier, elle prend
+5 minutes. Il ne reste ensuite qu'à remplir dans la configuration du serveur :
+
+```php
+'sheet_webhook_url'    => 'https://script.google.com/macros/s/…/exec',
+'sheet_webhook_secret' => 'la meme phrase que dans le script',
+```
+
+Laissées vides, ces deux clés désactivent simplement la passerelle : tout le
+reste continue de fonctionner.
+
+Le script **met à jour** la ligne si le numéro est déjà présent au lieu d'en
+créer une seconde. Renvoyer une réservation est donc sans conséquence, ce qui
+rend la resynchronisation sûre :
+
+```
+GET /api/?action=resync&staff=VOTRE_CLE_STAFF
+```
+
+Elle repousse toutes les réservations confirmées — utile si la passerelle était
+indisponible au moment d'une validation, ou si vous branchez la feuille après
+coup.
+
 ### Points d'entrée
 
 | Appel | Rôle |
@@ -197,6 +228,7 @@ cp afrobrunch-config.example.php /home/<compte>/afrobrunch-config.php
 | `GET /api/?action=find&email=` | retrouver un numéro perdu |
 | `GET /api/?action=checkin&ref=&staff=` | pointage à l'entrée |
 | `GET /api/?action=export&staff=` | **export CSV ouvrable dans Excel** |
+| `GET /api/?action=resync&staff=` | repousse les confirmées vers le Google Sheet |
 
 Les liens Valider / Refuser sont signés en HMAC-SHA256 avec `secret` : ils ne
 valent que pour une réservation et une action, et ne peuvent pas être devinés.

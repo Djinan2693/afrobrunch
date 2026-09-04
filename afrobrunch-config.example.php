@@ -32,6 +32,13 @@ return [
     'secret'    => 'REMPLACEZ_PAR_UNE_LONGUE_CHAINE_ALEATOIRE',
     'staff_key' => 'REMPLACEZ_PAR_UNE_CLE_STAFF',
 
+    // --- Passerelle Google Sheet ---
+    // Application web Apps Script (voir apps-script/SheetWebhook.gs). Appelee
+    // au moment ou l'organisateur valide un paiement. Laisser vide pour
+    // desactiver : le reste continue de fonctionner normalement.
+    'sheet_webhook_url'    => '',
+    'sheet_webhook_secret' => '',
+
     // --- Adresses ---
     'site_url' => 'https://afrobrunch.online/',
     'api_url'  => 'https://afrobrunch.online/api/',

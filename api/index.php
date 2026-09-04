@@ -420,6 +420,95 @@ function mail_buyer_rejected(array $b): void
 
 
 /* ==========================================================================
+ *  PASSERELLE VERS LE GOOGLE SHEET
+ * ======================================================================== */
+
+/** Met une ligne de la base au format attendu par le script Apps Script. */
+function sheet_row(array $b): array
+{
+    return [
+        'ref'         => $b['ref'],
+        'confirmedAt' => (string) ($b['validated_at'] ?? ''),
+        'name'        => $b['name'],
+        'email'       => $b['email'],
+        'phone'       => (string) ($b['phone'] ?? ''),
+        'adults'      => (int) $b['adults'],
+        'children'    => (int) $b['children'],
+        'infants'     => (int) $b['infants'],
+        'tickets'     => (int) $b['tickets'],
+        'guests'      => (int) $b['guests'],
+        'amount'      => (int) $b['amount'],
+        'method'      => (string) ($b['method'] ?? ''),
+        'payRef'      => (string) ($b['pay_ref'] ?? ''),
+        'notes'       => (string) ($b['notes'] ?? ''),
+        'checkedInAt' => (string) ($b['checked_in_at'] ?? ''),
+    ];
+}
+
+/**
+ * Envoie une ou plusieurs reservations confirmees au Google Sheet.
+ *
+ * Le script Apps Script met a jour la ligne si le numero existe deja : on peut
+ * donc renvoyer sans risque une reservation deja transmise, ce qui rend la
+ * resynchronisation inoffensive.
+ *
+ * Un echec ne doit jamais empecher une validation : l'appelant se contente de
+ * journaliser le probleme.
+ */
+function push_to_sheet(array $bookings): array
+{
+    $url = (string) cfg('sheet_webhook_url', '');
+    if ($url === '' || strpos($url, 'script.google.com') === false) {
+        return ['ok' => false, 'error' => 'Passerelle non configuree.'];
+    }
+    if (!$bookings) {
+        return ['ok' => true, 'written' => 0];
+    }
+
+    $payload = json_encode([
+        'secret'   => cfg('sheet_webhook_secret'),
+        'bookings' => array_map('sheet_row', $bookings),
+    ], JSON_UNESCAPED_UNICODE);
+
+    $body = null;
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $payload,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,   // Apps Script redirige vers googleusercontent
+            CURLOPT_TIMEOUT        => 25,
+        ]);
+        $body = curl_exec($ch);
+        if ($body === false) {
+            $err = curl_error($ch);
+            curl_close($ch);
+            return ['ok' => false, 'error' => $err];
+        }
+        curl_close($ch);
+    } else {
+        $ctx = stream_context_create(['http' => [
+            'method'        => 'POST',
+            'header'        => "Content-Type: application/json\r\n",
+            'content'       => $payload,
+            'timeout'       => 25,
+            'ignore_errors' => true,
+        ]]);
+        $body = @file_get_contents($url, false, $ctx);
+        if ($body === false) {
+            return ['ok' => false, 'error' => 'Appel impossible.'];
+        }
+    }
+
+    $decoded = json_decode((string) $body, true);
+    return is_array($decoded) ? $decoded : ['ok' => false, 'error' => 'Reponse illisible.'];
+}
+
+
+/* ==========================================================================
  *  PAGE DE REPONSE APRES UN CLIC DE L'ORGANISATEUR
  * ======================================================================== */
 
@@ -555,9 +644,19 @@ function do_decide(string $action, $refRaw, $token): void
     }
 
     if ($action === 'validate') {
+        $when = now();
         db()->prepare('UPDATE bookings SET status = "CONFIRMED", validated_at = ? WHERE ref = ?')
-            ->execute([now(), $ref]);
+            ->execute([$when, $ref]);
         $b['status'] = 'CONFIRMED';
+        $b['validated_at'] = $when;
+
+        /* Le Google Sheet est alimente ici, au moment ou l'organisateur valide.
+           Un echec ne remet pas la validation en cause : la reservation reste
+           en base et « action=resync » permet de rattraper plus tard. */
+        $sheet = push_to_sheet([$b]);
+        if (empty($sheet['ok'])) {
+            log_line('sheet ' . $ref . ' : ' . ($sheet['error'] ?? 'echec inconnu'));
+        }
 
         try {
             mail_buyer_confirmed($b);
@@ -680,6 +779,30 @@ function do_checkin(array $q): array
     return do_verify($ref);
 }
 
+/**
+ * Renvoie au Google Sheet toutes les reservations confirmees.
+ * Utile si la passerelle etait indisponible au moment d'une validation, ou si
+ * vous branchez la feuille apres coup.
+ */
+function do_resync(array $q): array
+{
+    if (empty($q['staff']) || !hash_equals((string) cfg('staff_key'), (string) $q['staff'])) {
+        return ['ok' => false, 'error' => 'Invalid staff key.'];
+    }
+
+    $rows = db()->query('SELECT * FROM bookings WHERE status = "CONFIRMED" ORDER BY id')
+        ->fetchAll(PDO::FETCH_ASSOC);
+
+    if (!$rows) {
+        return ['ok' => true, 'written' => 0, 'message' => 'Aucune reservation confirmee.'];
+    }
+
+    $result = push_to_sheet($rows);
+    $result['sent'] = count($rows);
+    return $result;
+}
+
+
 /** Export CSV, ouvrable directement dans Excel. */
 function do_export(array $q): void
 {
@@ -748,6 +871,10 @@ try {
 
         case 'export':
             do_export($_GET);
+            break;
+
+        case 'resync':
+            json_out(do_resync($_GET), $callback);
             break;
 
         case 'ping':
