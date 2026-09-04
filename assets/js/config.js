@@ -11,9 +11,8 @@
 
 window.AFRO_CONFIG = {
 
-  /* << A REMPLIR >> URL de l'application web Google Apps Script.
-     Vous l'obtenez a l'etape 4 du README (elle finit par /exec). */
-  API_URL: 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE',
+  /* Backend PHP heberge sur le meme domaine (public_html/api). */
+  API_URL: 'https://afrobrunch.online/api/',
 
   /* Adresse publique du site sur GitHub Pages. */
   SITE_URL: 'https://afrobrunch.online/',

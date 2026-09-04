@@ -60,7 +60,7 @@
 
   /* --------------------------------------------------- avertissement config */
 
-  if (!CFG.API_URL || CFG.API_URL.indexOf('script.google.com') === -1) {
+  if (!CFG.API_URL || CFG.API_URL.indexOf('PASTE_YOUR') > -1) {
     var warn = document.createElement('p');
     warn.className = 'bk-setup';
     warn.innerHTML = '<strong>Preview.</strong> You can walk through the whole booking flow, ' +
@@ -445,7 +445,7 @@
     showError(3, '');
 
     /* mode demo : aucune URL d'API configuree */
-    if (!CFG.API_URL || CFG.API_URL.indexOf('script.google.com') === -1) {
+    if (!CFG.API_URL || CFG.API_URL.indexOf('PASTE_YOUR') > -1) {
       showDone(state.ref);
       return;
     }

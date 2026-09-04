@@ -1,3 +1,6 @@
 .DS_Store
 Thumbs.db
 .cpanel-token
+api/lib/*.php
+!api/lib/.htaccess
+afrobrunch-config.php

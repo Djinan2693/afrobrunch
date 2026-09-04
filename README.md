@@ -158,6 +158,53 @@ L'onglet **Guest list** du classeur est la liste à imprimer en secours.
 
 ---
 
+## Backend
+
+Le backend de production est **PHP, sur le serveur cPanel** : `api/index.php`.
+Zoho Mail en offre gratuite **ne donne pas accès au SMTP**, l'envoi passe donc par
+le SMTP cPanel.
+
+| | |
+|---|---|
+| Stockage | SQLite dans `/home/afrobrunch/data/`, **hors `public_html`** |
+| Captures de paiement | `/home/afrobrunch/data/proofs/`, jamais accessibles par URL |
+| Envoi | SMTP `mail.afrobrunch.online:587` (STARTTLS), via PHPMailer |
+| Expéditeur | `contact@afrobrunch.online` — Exim impose que l'expéditeur soit le compte authentifié |
+| Réponses | `billeterie@afrobrunch.online`, la boîte Zoho |
+| Secrets | `/home/afrobrunch/afrobrunch-config.php`, hors `public_html` et hors dépôt |
+
+Le dossier `apps-script/` conserve la première version du backend (Google Apps
+Script + Google Sheet). Elle n'est plus utilisée mais reste fonctionnelle si vous
+vouliez revenir à un stockage dans un Google Sheet.
+
+### Installer le backend sur un nouveau serveur
+
+```bash
+cp afrobrunch-config.example.php /home/<compte>/afrobrunch-config.php
+# remplir SMTP, secret, staff_key
+./api/lib/fetch-phpmailer.sh     # recupere PHPMailer (non versionne)
+./deploy.sh
+```
+
+### Points d'entrée
+
+| Appel | Rôle |
+|---|---|
+| `POST /api/` | nouvelle réservation |
+| `GET /api/?action=validate&ref=&token=` | bouton **Valider** de l'email organisateur |
+| `GET /api/?action=reject&ref=&token=` | bouton **Refuser** |
+| `GET /api/?action=verify&ref=` | vérification publique d'un numéro |
+| `GET /api/?action=find&email=` | retrouver un numéro perdu |
+| `GET /api/?action=checkin&ref=&staff=` | pointage à l'entrée |
+| `GET /api/?action=export&staff=` | **export CSV ouvrable dans Excel** |
+
+Les liens Valider / Refuser sont signés en HMAC-SHA256 avec `secret` : ils ne
+valent que pour une réservation et une action, et ne peuvent pas être devinés.
+Le montant est **toujours recalculé par le serveur** à partir du nombre
+d'adultes et d'enfants.
+
+---
+
 ## Production — ce qui est en place
 
 Le site est en ligne sur **https://afrobrunch.online** (hébergement cPanel, compte

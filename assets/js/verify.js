@@ -39,7 +39,7 @@
   };
 
   var configured = function () {
-    return CFG.API_URL && CFG.API_URL.indexOf('script.google.com') > -1;
+    return CFG.API_URL && CFG.API_URL.indexOf('PASTE_YOUR') === -1;
   };
 
   /* ------------------------------------------------------------------ JSONP */
@@ -71,7 +71,7 @@
       };
 
       query.callback = callback;
-      script.src = CFG.API_URL + '?' + new URLSearchParams(query).toString();
+      script.src = CFG.API_URL + (CFG.API_URL.indexOf('?') > -1 ? '&' : '?') + new URLSearchParams(query).toString();
       document.body.appendChild(script);
     });
   };

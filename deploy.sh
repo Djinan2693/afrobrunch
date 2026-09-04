@@ -38,6 +38,10 @@ for sheet in ("assets/css/style.css", "assets/css/afrobrunch.css"):
     c = open(sheet, encoding="utf-8").read()
     for r in re.findall(r"url\('(\.\./[^']+)'\)", c):
         files.add(os.path.normpath(os.path.join(os.path.dirname(sheet), r)))
+# le backend PHP : index.php et les deux .htaccess de protection
+for extra in ("api/index.php", "api/.htaccess", "api/lib/.htaccess"):
+    if os.path.isfile(extra):
+        files.add(extra)
 print("\n".join(sorted(f for f in files if os.path.isfile(f))))
 PY
 
@@ -60,7 +64,7 @@ done < /tmp/afro-deploy-list.txt
 echo "    $OK envoye(s), $KO echec(s)"
 
 echo "==> Verification en ligne"
-for p in "" verify.html assets/js/config.js assets/css/afrobrunch.css; do
+for p in "" verify.html assets/js/config.js assets/css/afrobrunch.css "api/?action=ping"; do
   code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$SITE/$p")
   printf "    %-32s %s\n" "/$p" "$code"
 done
