@@ -38,6 +38,35 @@
 
 
 /*-----------------------------------*\
+  #BOUTONS — ETAT SURVOLE RENDU PERMANENT
+\*-----------------------------------*/
+
+/* Au repos, le template affiche un contour dore avec un texte dore, et ne
+   remplit le fond qu'au survol, en faisant glisser un second libelle par
+   en dessous. On fige cet etat survole : fond dore, texte sombre, en
+   permanence. Le disque anime (::before) et le libelle de rechange (.text-2)
+   n'ont donc plus de raison d'exister. */
+.btn {
+  background-color: var(--gold-crayola);
+  color: var(--smoky-black-1);
+}
+
+.btn::before { content: none; }
+
+.btn .text-2 { display: none; }
+
+/* neutralise le glissement du libelle au survol et au focus */
+.btn:is(:hover, :focus-visible) .text-1 { transform: none; }
+
+/* le survol ne change plus rien, mais la navigation au clavier doit rester
+   visible : on garde un lisere de focus */
+.btn:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+}
+
+
+/*-----------------------------------*\
   #HERO — NETTETE
 \*-----------------------------------*/
 
