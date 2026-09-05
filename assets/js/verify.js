@@ -102,7 +102,9 @@
   };
 
   var phone = function () {
-    return esc((CFG.CONTACT || {}).phone1 || 'the organiser');
+    var c = CFG.CONTACT || {};
+    if (c.phone1 && c.phone2) return esc(c.phone1) + ' or ' + esc(c.phone2);
+    return esc(c.phone1 || c.phone2 || 'the organiser');
   };
 
   /* Carte d'une reservation, commune aux deux modes de recherche. */
