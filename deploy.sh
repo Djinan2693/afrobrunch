@@ -38,6 +38,15 @@ for sheet in ("assets/css/style.css", "assets/css/afrobrunch.css"):
     c = open(sheet, encoding="utf-8").read()
     for r in re.findall(r"url\('(\.\./[^']+)'\)", c):
         files.add(os.path.normpath(os.path.join(os.path.dirname(sheet), r)))
+# les images citees en URL absolue dans les balises de partage (og:image,
+# twitter:image) : elles ne sont pas des src/href, le balayage ci-dessus les
+# manque, et l'apercu WhatsApp tombe alors en 404
+for page in ("index.html", "verify.html"):
+    h = open(page, encoding="utf-8").read()
+    for u in re.findall(r'content="https://afrobrunch\.online/([^"]+)"', h):
+        if os.path.isfile(u):
+            files.add(u)
+
 # le backend PHP : index.php et les deux .htaccess de protection
 for extra in ("api/index.php", "api/.htaccess", "api/lib/.htaccess"):
     if os.path.isfile(extra):
