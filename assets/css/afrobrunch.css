@@ -38,6 +38,23 @@
 
 
 /*-----------------------------------*\
+  #HERO — NETTETE
+\*-----------------------------------*/
+
+/* Le template zoome le fond du hero de 1,15x pendant 7 s (effet Ken Burns).
+   Combine a l'etirement plein ecran, cela agrandissait les photos de 3,5x et
+   les rendait floues. Les visuels sont desormais des mosaiques rendues en
+   2040x936, ou chaque plat reste proche de sa taille reelle ; on ramene le
+   zoom a 1,06x pour ne pas regagner du flou. */
+.hero .slider-bg { transform: scale(1.06); }
+
+@keyframes smoothScale {
+  0%   { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
+
+/*-----------------------------------*\
   #LOGO
 \*-----------------------------------*/
 
