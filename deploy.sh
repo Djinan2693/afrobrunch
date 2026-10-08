@@ -38,6 +38,16 @@ for sheet in ("assets/css/style.css", "assets/css/afrobrunch.css"):
     c = open(sheet, encoding="utf-8").read()
     for r in re.findall(r"url\('(\.\./[^']+)'\)", c):
         files.add(os.path.normpath(os.path.join(os.path.dirname(sheet), r)))
+# les fichiers cites depuis le JavaScript (QR de paiement dans config.js, par
+# exemple) : ce ne sont ni des src/href ni des url() CSS, le balayage ci-dessus
+# les manque, et ils finissent en 404 sur le site
+import glob
+for js in glob.glob("assets/js/*.js"):
+    code = open(js, encoding="utf-8").read()
+    for u in re.findall(r"['\"]\./((?:assets)/[^'\"]+)['\"]", code):
+        if os.path.isfile(u):
+            files.add(u)
+
 # les images citees en URL absolue dans les balises de partage (og:image,
 # twitter:image) : elles ne sont pas des src/href, le balayage ci-dessus les
 # manque, et l'apercu WhatsApp tombe alors en 404

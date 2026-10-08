@@ -158,6 +158,38 @@ L'onglet **Guest list** du classeur est la liste à imprimer en secours.
 
 ---
 
+## État actuel — après l'événement
+
+L'édition du **27 septembre 2026** a eu lieu : 31 réservations confirmées,
+64 convives, ₱91 200.
+
+Le site est passé en mode après-événement :
+
+- le **tunnel de réservation est retiré** de la page et **refusé côté serveur**
+  (`'bookings_open' => false`), pour ne pas encaisser un billet périmé ;
+- la page affiche un **remerciement** et annonce la prochaine édition ;
+- un formulaire recueille les emails de ceux qui veulent être prévenus.
+
+### Rouvrir la billetterie pour la prochaine édition
+
+1. recoller `snippets/booking-section.html` dans `index.html`, avant `#FEATURES` ;
+2. y recharger `assets/js/booking.js` à la place de `waitlist.js` ;
+3. repasser `'bookings_open' => true` dans `/home/afrobrunch/afrobrunch-config.php` ;
+4. mettre à jour les dates et les tarifs dans `assets/js/config.js` **et** dans
+   la configuration serveur ;
+5. `./deploy.sh`.
+
+### Liste d'attente
+
+```
+GET /api/?action=export_subs&staff=VOTRE_CLE_STAFF
+```
+
+Export CSV des inscrits. Chaque inscription déclenche un email de confirmation ;
+une adresse déjà présente n'est jamais dupliquée.
+
+---
+
 ## Backend
 
 Le backend de production est **PHP, sur le serveur cPanel** : `api/index.php`.

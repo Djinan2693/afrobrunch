@@ -1,0 +1,323 @@
+<!--
+  Tunnel de reservation de l'edition 2026, retire de index.html apres
+  l'evenement. Conserve ici pour pouvoir rouvrir la billetterie sans tout
+  reecrire : recoller ce bloc dans index.html avant la section #FEATURES,
+  recharger assets/js/booking.js, et repasser 'bookings_open' a true dans
+  /home/afrobrunch/afrobrunch-config.php.
+-->
+      <!-- - #BOOKING  (tunnel de reservation semi-manuel) -->
+
+      <section class="section booking" aria-labelledby="booking-label" id="booking">
+        <div class="container">
+
+          <p class="section-subtitle label-2 text-center">Reserve Your Seat</p>
+          <h2 class="headline-1 section-title text-center" id="booking-label">Get Your Ticket</h2>
+
+          <p class="section-text text-center bk-intro">
+            Seats are limited and confirmed manually by the organiser. Fill in your details, pay by scanning
+            the QR code, and send us the proof — you will get your reservation number by email once we confirm
+            the payment.
+          </p>
+
+          <div class="bk-layout">
+
+            <!-- ---------- colonne principale : les etapes ---------- -->
+            <div class="bk-main bg-black-10">
+
+              <ol class="bk-steps" aria-label="Booking steps">
+                <li class="bk-step is-active" data-step-dot="1"><span class="bk-step-num">1</span><span
+                    class="bk-step-label">Your details</span></li>
+                <li class="bk-step" data-step-dot="2"><span class="bk-step-num">2</span><span
+                    class="bk-step-label">Pay by QR</span></li>
+                <li class="bk-step" data-step-dot="3"><span class="bk-step-num">3</span><span
+                    class="bk-step-label">Send proof</span></li>
+                <li class="bk-step" data-step-dot="4"><span class="bk-step-num">4</span><span
+                    class="bk-step-label">Confirmed</span></li>
+              </ol>
+
+              <!-- ===== ETAPE 1 ===== -->
+              <div class="bk-panel is-active" data-step="1">
+
+                <h3 class="title-2 bk-panel-title">Who is coming?</h3>
+
+                <div class="bk-field">
+                  <label class="bk-label" for="bk-name">Full name <span class="bk-req">*</span></label>
+                  <input type="text" id="bk-name" name="name" class="input-field" autocomplete="name"
+                    placeholder="e.g. Maria Santos">
+                </div>
+
+                <div class="bk-row">
+                  <div class="bk-field">
+                    <label class="bk-label" for="bk-email">Email <span class="bk-req">*</span></label>
+                    <input type="email" id="bk-email" name="email" class="input-field" autocomplete="email"
+                      placeholder="you@example.com">
+                    <p class="bk-hint">Your reservation number will be sent here.</p>
+                  </div>
+
+                  <div class="bk-field">
+                    <label class="bk-label" for="bk-phone">Mobile number <span class="bk-req">*</span></label>
+                    <input type="tel" id="bk-phone" name="phone" class="input-field" autocomplete="tel"
+                      placeholder="+63 9xx xxx xxxx">
+                  </div>
+                </div>
+
+                <div class="bk-row bk-row-3">
+                  <div class="bk-field">
+                    <label class="bk-label" for="bk-adults">Adults <span class="bk-req">*</span></label>
+                    <div class="icon-wrapper">
+                      <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+                      <select id="bk-adults" name="adults" class="input-field"></select>
+                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </div>
+                    <p class="bk-hint"><span data-price-adult>₱1,700</span> each</p>
+                  </div>
+
+                  <div class="bk-field">
+                    <label class="bk-label" for="bk-children">Children</label>
+                    <div class="icon-wrapper">
+                      <ion-icon name="happy-outline" aria-hidden="true"></ion-icon>
+                      <select id="bk-children" name="children" class="input-field"></select>
+                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </div>
+                    <p class="bk-hint"><span data-price-child>₱700</span> each —
+                      <span data-child-ages>7 to 12 years old</span></p>
+                  </div>
+
+                  <div class="bk-field">
+                    <label class="bk-label" for="bk-infants">Little ones</label>
+                    <div class="icon-wrapper">
+                      <ion-icon name="heart-outline" aria-hidden="true"></ion-icon>
+                      <select id="bk-infants" name="infants" class="input-field"></select>
+                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </div>
+                    <p class="bk-hint"><strong class="bk-free">Free</strong> —
+                      <span data-infant-ages>under 7 — free</span></p>
+                  </div>
+                </div>
+
+                <div class="bk-field">
+                  <label class="bk-label" for="bk-notes">Allergies or notes</label>
+                  <input type="text" id="bk-notes" name="notes" class="input-field"
+                    placeholder="Optional — e.g. no peanuts, high chair needed">
+                </div>
+
+                <p class="bk-error" data-error-for="1" hidden></p>
+
+                <button type="button" class="btn btn-secondary bk-next" data-goto="2">
+                  <span class="text text-1">Continue To Payment</span>
+                  <span class="text text-2" aria-hidden="true">Continue To Payment</span>
+                </button>
+
+              </div>
+
+              <!-- ===== ETAPE 2 ===== -->
+              <div class="bk-panel" data-step="2">
+
+                <h3 class="title-2 bk-panel-title">Scan &amp; pay</h3>
+
+                <p class="bk-amount-line">
+                  Amount to send: <strong class="bk-amount" data-total-amount>₱1,700</strong>
+                </p>
+
+                <div class="bk-tabs" role="tablist" aria-label="Payment method">
+                  <button type="button" class="bk-tab is-active" role="tab" aria-selected="true"
+                    data-method="gcash">GCash</button>
+                  <button type="button" class="bk-tab" role="tab" aria-selected="false" data-method="bpi">BPI /
+                    InstaPay</button>
+                </div>
+
+                <div class="bk-qr-wrap">
+                  <figure class="bk-qr">
+                    <img src="./assets/images/qr-gcash.jpeg" alt="Payment QR code" data-qr-img>
+                  </figure>
+
+                  <div class="bk-qr-info">
+                    <p class="contact-label">Account</p>
+                    <p class="bk-acc-name" data-acc-name>MB*A KO****A DE***E K.</p>
+                    <p class="bk-acc-ref" data-acc-ref>Mobile No. 0977 078 ••••</p>
+
+                    <div class="separator"></div>
+
+                    <p class="bk-note" data-acc-note></p>
+
+                    <a class="bk-download" data-qr-download href="./assets/images/qr-gcash.jpeg"
+                      download="afrobrunch-qr.jpeg">
+                      <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+                      Save the QR to your phone
+                    </a>
+                  </div>
+                </div>
+
+                <ol class="bk-howpay">
+                  <li>Open your GCash or bank app and scan the QR code above.</li>
+                  <li>Send exactly <strong data-total-amount>₱1,700</strong>.</li>
+                  <li>Take a screenshot of the confirmation — you will need it on the next step.</li>
+                </ol>
+
+                <div class="bk-actions">
+                  <button type="button" class="bk-back" data-goto="1">
+                    <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon> Back
+                  </button>
+
+                  <button type="button" class="btn btn-secondary bk-next" data-goto="3">
+                    <span class="text text-1">I Have Paid</span>
+                    <span class="text text-2" aria-hidden="true">I Have Paid</span>
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- ===== ETAPE 3 ===== -->
+              <div class="bk-panel" data-step="3">
+
+                <h3 class="title-2 bk-panel-title">Send your proof of payment</h3>
+
+                <div class="bk-field">
+                  <label class="bk-label" for="bk-payref">Transaction / reference number <span
+                      class="bk-req">*</span></label>
+                  <input type="text" id="bk-payref" name="payref" class="input-field"
+                    placeholder="e.g. 1029384756 — shown in your GCash or bank receipt">
+                </div>
+
+                <div class="bk-field">
+                  <label class="bk-label" for="bk-proof">Screenshot of the payment <span class="bk-req">*</span></label>
+
+                  <label class="bk-drop" for="bk-proof" data-drop>
+                    <input type="file" id="bk-proof" accept="image/*" hidden>
+                    <span class="bk-drop-inner" data-drop-empty>
+                      <ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+                      <span class="bk-drop-title">Tap to add your screenshot</span>
+                      <span class="bk-hint">JPG or PNG — it is resized automatically before sending.</span>
+                    </span>
+                    <span class="bk-drop-preview" data-drop-preview hidden>
+                      <img alt="Payment proof preview" data-preview-img>
+                      <span class="bk-drop-meta" data-preview-meta></span>
+                    </span>
+                  </label>
+
+                  <button type="button" class="bk-clear" data-clear-proof hidden>Remove the screenshot</button>
+                </div>
+
+                <label class="bk-check">
+                  <input type="checkbox" id="bk-terms">
+                  <span>I confirm the payment has been sent and I understand my seat is reserved only once the
+                    organiser has validated it.</span>
+                </label>
+
+                <p class="bk-error" data-error-for="3" hidden></p>
+
+                <div class="bk-actions">
+                  <button type="button" class="bk-back" data-goto="2">
+                    <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon> Back
+                  </button>
+
+                  <button type="button" class="btn btn-secondary" data-submit>
+                    <span class="text text-1">Submit My Booking</span>
+                    <span class="text text-2" aria-hidden="true">Submit My Booking</span>
+                  </button>
+                </div>
+
+                <p class="bk-sending" data-sending hidden>
+                  <span class="bk-spinner" aria-hidden="true"></span> Sending your booking…
+                </p>
+
+              </div>
+
+              <!-- ===== ETAPE 4 ===== -->
+              <div class="bk-panel bk-done" data-step="4">
+
+                <div class="bk-done-icon">
+                  <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+                </div>
+
+                <h3 class="headline-2 bk-panel-title">Booking received</h3>
+
+                <p class="bk-done-text">
+                  Thank you <strong data-done-name>—</strong>. We have sent a copy to
+                  <strong data-done-email>—</strong> and the organiser is checking your payment now.
+                </p>
+
+                <p class="contact-label bk-done-label">Your booking reference</p>
+                <p class="bk-ref" data-done-ref>—</p>
+
+                <p class="bk-done-text bk-done-small">
+                  This is not your entry ticket yet. Once the organiser validates the payment you will receive a
+                  second email containing your <strong>reservation number</strong> — that is the one you show at the
+                  door. It usually takes a few hours.
+                </p>
+
+                <a href="./verify.html" class="btn btn-primary bk-done-btn">
+                  <span class="text text-1">Check My Reservation</span>
+                  <span class="text text-2" aria-hidden="true">Check My Reservation</span>
+                </a>
+
+              </div>
+
+            </div>
+
+            <!-- ---------- colonne laterale : recapitulatif ---------- -->
+            <aside class="bk-side" aria-label="Order summary">
+
+              <div class="bk-summary has-bg-image"
+                style="background-image: url('./assets/images/form-pattern.png')">
+
+                <p class="section-subtitle label-2">Your Order</p>
+
+                <h3 class="title-1 bk-sum-title">Afro Brunch 2026</h3>
+
+                <ul class="bk-sum-list">
+                  <li>
+                    <ion-icon name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+                    <span>Sunday, September 27, 2026</span>
+                  </li>
+                  <li>
+                    <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                    <span>4:00 PM — 8:00 PM</span>
+                  </li>
+                  <li>
+                    <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                    <span>Escalades South Metro,<br>Sucat, Metro Manila</span>
+                  </li>
+                  <li>
+                    <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
+                    <span>Eat all you can + welcome drink</span>
+                  </li>
+                </ul>
+
+                <div class="separator"></div>
+
+                <div class="bk-sum-row" data-sum-adults-row>
+                  <span>Adults <em data-sum-adults-qty>× 1</em></span>
+                  <span data-sum-adults-total>₱1,700</span>
+                </div>
+                <div class="bk-sum-row" data-sum-children-row hidden>
+                  <span>Children <em data-sum-children-qty>× 0</em></span>
+                  <span data-sum-children-total>₱0</span>
+                </div>
+                <div class="bk-sum-row" data-sum-infants-row hidden>
+                  <span>Under 7 <em data-sum-infants-qty>× 0</em></span>
+                  <span class="bk-free">Free</span>
+                </div>
+                <div class="bk-sum-row bk-sum-total">
+                  <span>Total</span>
+                  <span data-total-amount>₱1,700</span>
+                </div>
+
+                <p class="bk-sum-note">
+                  Payment is verified by hand. Your seat is held as <em>pending</em> until the organiser
+                  confirms it.
+                </p>
+
+              </div>
+
+            </aside>
+
+          </div>
+
+        </div>
+      </section>
+
+
+
+
+

@@ -164,6 +164,16 @@ function db(): PDO
         )');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_email ON bookings(email)');
 
+    /* Liste d'attente pour la prochaine edition. L'email est unique : une
+       personne qui s'inscrit deux fois ne cree pas de doublon. */
+    $pdo->exec('
+        CREATE TABLE IF NOT EXISTS subscribers (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_at TEXT NOT NULL,
+            email      TEXT UNIQUE NOT NULL,
+            name       TEXT
+        )');
+
     return $pdo;
 }
 
@@ -396,6 +406,30 @@ function mail_buyer_confirmed(array $b): void
     $m->Body = $body;
     $m->send();
 }
+
+function mail_subscriber(string $email, string $name): void
+{
+    $e = cfg('event');
+    $body = email_shell(
+        'You are on the list',
+        ($name !== '' ? esc($name) . ', you' : 'You') . ' will be the first to know.',
+        '<p style="margin:0 0 18px;">Thank you for the interest in Afro Brunch. As soon as the '
+            . 'date of the next edition is set, you will get an email &mdash; before the tickets '
+            . 'go on sale publicly.</p>'
+            . '<p style="margin:0 0 18px;">The last one filled up with 64 guests around one long '
+            . 'table, and more than 20 African dishes. The next one will be bigger.</p>'
+            . '<p style="margin:22px 0 0;font-size:13px;color:#9b9186;">You can unsubscribe at any '
+            . 'time by replying to this email. Questions: ' . esc(cfg('phone1')) . ' or '
+            . esc(cfg('phone2')) . '.</p>'
+    );
+
+    $m = mailer();
+    $m->addAddress($email, $name !== '' ? $name : $email);
+    $m->Subject = 'You are on the list — Afro Brunch';
+    $m->Body = $body;
+    $m->send();
+}
+
 
 function mail_buyer_rejected(array $b): void
 {
@@ -780,6 +814,63 @@ function do_checkin(array $q): array
 }
 
 /**
+ * Inscription a la liste d'attente de la prochaine edition.
+ *
+ * Reinscrire la meme adresse ne cree pas de doublon et ne renvoie pas
+ * d'erreur : du point de vue du visiteur, l'action a reussi dans les deux cas.
+ */
+function do_subscribe(array $p): array
+{
+    $email = strtolower(trim((string) ($p['email'] ?? '')));
+    $name  = trim((string) ($p['name'] ?? ''));
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return ['ok' => false, 'error' => 'Please enter a valid email address.'];
+    }
+
+    $existing = db()->prepare('SELECT id FROM subscribers WHERE email = ?');
+    $existing->execute([$email]);
+    $already = (bool) $existing->fetch();
+
+    if (!$already) {
+        $st = db()->prepare('INSERT INTO subscribers (created_at, email, name) VALUES (?, ?, ?)');
+        $st->execute([now(), $email, $name]);
+
+        /* Un echec d'envoi ne doit pas faire croire a un echec d'inscription :
+           l'adresse est deja enregistree a ce stade. */
+        try {
+            mail_subscriber($email, $name);
+        } catch (Throwable $e) {
+            log_line('mail subscriber ' . $email . ' : ' . $e->getMessage());
+        }
+    }
+
+    return ['ok' => true, 'already' => $already];
+}
+
+
+/** Export CSV de la liste d'attente. */
+function do_export_subs(array $q): void
+{
+    if (empty($q['staff']) || !hash_equals((string) cfg('staff_key'), (string) $q['staff'])) {
+        http_response_code(403);
+        exit('Invalid staff key.');
+    }
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="afrobrunch-liste-attente.csv"');
+
+    $out = fopen('php://output', 'w');
+    fwrite($out, "\xEF\xBB\xBF");
+    fputcsv($out, ['Date', 'Email', 'Nom']);
+    foreach (db()->query('SELECT * FROM subscribers ORDER BY id') as $r) {
+        fputcsv($out, [$r['created_at'], $r['email'], $r['name']]);
+    }
+    fclose($out);
+}
+
+
+/**
  * Renvoie au Google Sheet toutes les reservations confirmees.
  * Utile si la passerelle etait indisponible au moment d'une validation, ou si
  * vous branchez la feuille apres coup.
@@ -840,11 +931,32 @@ try {
         $raw = file_get_contents('php://input');
         $payload = json_decode((string) $raw, true);
 
-        if (!is_array($payload) || ($payload['action'] ?? '') !== 'book') {
+        if (!is_array($payload)) {
             json_out(['ok' => false, 'error' => 'Unknown action.']);
             exit;
         }
-        json_out(do_book($payload));
+
+        $what = $payload['action'] ?? '';
+
+        if ($what === 'subscribe') {
+            json_out(do_subscribe($payload));
+            exit;
+        }
+
+        /* La billetterie est close depuis la fin de l'edition 2026 : on refuse
+           toute nouvelle reservation plutot que d'encaisser pour un evenement
+           deja passe. Remettre BOOKINGS_OPEN a true rouvrira le tunnel. */
+        if ($what === 'book') {
+            if (!cfg('bookings_open', false)) {
+                json_out(['ok' => false,
+                    'error' => 'Bookings are closed — Afro Brunch 2026 has already taken place.']);
+                exit;
+            }
+            json_out(do_book($payload));
+            exit;
+        }
+
+        json_out(['ok' => false, 'error' => 'Unknown action.']);
         exit;
     }
 
@@ -871,6 +983,10 @@ try {
 
         case 'export':
             do_export($_GET);
+            break;
+
+        case 'export_subs':
+            do_export_subs($_GET);
             break;
 
         case 'resync':

@@ -744,6 +744,97 @@
 
 
 /*-----------------------------------*\
+  #REMERCIEMENT ET PROCHAINE EDITION
+\*-----------------------------------*/
+
+.thanks { scroll-margin-top: 90px; }
+
+.tx-lead {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+.tx-stats {
+  display: grid;
+  gap: 26px;
+  margin-block: 50px;
+  text-align: center;
+}
+
+.tx-stats li {
+  padding: 26px 20px;
+  background-color: var(--eerie-black-2);
+  border: 1px solid var(--afro-line);
+  border-top: 3px solid var(--gold-crayola);
+}
+
+.tx-num {
+  display: block;
+  font-family: var(--fontFamily-forum);
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--gold-crayola);
+}
+
+.tx-label {
+  display: block;
+  margin-block-start: 10px;
+  font-size: var(--fontSize-label-1);
+  line-height: var(--lineHeight-4);
+  color: var(--quick-silver);
+}
+
+.tx-next {
+  max-width: 620px;
+  margin-inline: auto;
+  margin-block-start: 60px;
+  padding-block-start: 50px;
+  border-block-start: 1px solid var(--afro-line);
+}
+
+.tx-next-title { color: var(--white); margin-block-end: 14px; }
+
+.tx-form {
+  margin-block-start: 34px;
+  padding: 30px 24px;
+  background-color: var(--eerie-black-2);
+  border: 1px solid var(--afro-line);
+}
+
+.tx-form .input-field { width: 100%; margin-block-end: 0; }
+
+.tx-submit { margin-inline: auto; }
+
+.tx-done {
+  margin-block-start: 34px;
+  padding: 34px 24px;
+  text-align: center;
+  background-color: var(--eerie-black-2);
+  border: 1px solid var(--afro-line);
+  border-top: 3px solid var(--afro-green);
+}
+
+.tx-done-icon ion-icon {
+  font-size: 5.4rem;
+  color: var(--afro-green);
+}
+
+.tx-done-text {
+  margin-block-start: 14px;
+  color: var(--quick-silver);
+  line-height: var(--lineHeight-5);
+}
+
+.tx-note {
+  margin-block-start: 26px;
+  font-size: var(--fontSize-label-1);
+  color: var(--davys-grey);
+}
+
+.tx-note .link { color: var(--gold-crayola); }
+
+
+/*-----------------------------------*\
   #PAGE DE VERIFICATION
 \*-----------------------------------*/
 
@@ -930,6 +1021,8 @@
   .bk-step-label { display: block; }
 
   .hw-list { grid-template-columns: repeat(2, 1fr); }
+
+  .tx-stats { grid-template-columns: repeat(3, 1fr); }
 
 }
 
