@@ -416,7 +416,7 @@ function mail_subscriber(string $email, string $name): void
         '<p style="margin:0 0 18px;">Thank you for the interest in Afro Brunch. As soon as the '
             . 'date of the next edition is set, you will get an email &mdash; before the tickets '
             . 'go on sale publicly.</p>'
-            . '<p style="margin:0 0 18px;">The last one filled up with 64 guests around one long '
+            . '<p style="margin:0 0 18px;">The last one filled up with 75 guests around one long '
             . 'table, and more than 20 African dishes. The next one will be bigger.</p>'
             . '<p style="margin:22px 0 0;font-size:13px;color:#9b9186;">You can unsubscribe at any '
             . 'time by replying to this email. Questions: ' . esc(cfg('phone1')) . ' or '
