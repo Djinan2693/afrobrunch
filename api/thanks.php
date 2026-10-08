@@ -5,6 +5,7 @@
  * =============================================================================
  *  Script d'administration, protege par la cle staff.
  *
+ *    ?action=preview&staff=...[&name=...]     affiche le message sans l'envoyer
  *    ?action=list&staff=...                   liste les destinataires, n'envoie rien
  *    ?action=test&staff=...&to=a@b.com        envoie a une ou plusieurs adresses
  *                                             (separees par des virgules)
@@ -74,10 +75,10 @@ function body_for(string $name): string
 
         . '<div style="font-size:15px;line-height:1.7;color:#d8cec0;">'
         . '<p style="margin:0 0 16px;">' . $hello . '</p>'
-        . '<p style="margin:0 0 16px;">On September 27 you sat at one long table with '
-        . 'seventy-four other people, and between us we went through more than twenty '
-        . 'African dishes. Thank you for coming hungry, for sitting with strangers, and for '
-        . 'making the first Afro Brunch what it was.</p>'
+        . '<p style="margin:0 0 16px;">On September 27 you were one of seventy-five people '
+        . 'who filled every table, and between us we went through more than twenty African '
+        . 'dishes. Thank you for coming hungry, for sitting with people you had never met, '
+        . 'and for making the first Afro Brunch what it was.</p>'
         . '<p style="margin:0 0 16px;">We are already working on the next one. The date is '
         . 'not set yet &mdash; but you were there for the first, so you will hear about it '
         . 'before anyone else.</p>'
@@ -148,6 +149,12 @@ if ($action === 'list') {
     exit;
 }
 
+if ($action === 'preview') {
+    header('Content-Type: text/html; charset=utf-8');
+    echo body_for(first_name((string) ($_GET['name'] ?? 'Stephane')));
+    exit;
+}
+
 if ($action === 'test') {
     $to = array_filter(array_map('trim', explode(',', (string) ($_GET['to'] ?? ''))));
     if (!$to) exit("Parametre « to » manquant.\n");
@@ -190,4 +197,4 @@ if ($action === 'send') {
     exit;
 }
 
-echo "Action inconnue. Utilisez list, test ou send.\n";
+echo "Action inconnue. Utilisez preview, list, test ou send.\n";
