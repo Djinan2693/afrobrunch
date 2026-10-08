@@ -36,6 +36,12 @@
    Cette regle retablit le comportement attendu pour tout le site. */
 [hidden] { display: none !important; }
 
+/* Le meme reset applique « display: block » aux liens. Un lien place dans une
+   phrase passait donc a la ligne, en emportant la ponctuation qui le suit —
+   visible sur « …look up your reservation number here . ». On retablit le
+   comportement en ligne, sauf pour les liens qui sont des boutons. */
+p a:not(.btn) { display: inline; }
+
 
 /*-----------------------------------*\
   #BOUTONS — ETAT SURVOLE RENDU PERMANENT
