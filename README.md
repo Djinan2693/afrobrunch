@@ -291,9 +291,17 @@ credential ne doit y figurer.
 | Serveurs de noms | `ns3.yottasrc.com`, `ns4.yottasrc.com` | les `*.h-goldh.com` pointaient vers 127.0.0.1 et cassaient tout le domaine |
 | A / www | `45.67.139.10` | le site |
 | MX | `mx.zoho.com` 10, `mx2` 20, `mx3` 50 | la messagerie chez Zoho |
-| SPF | `v=spf1 +a +mx +ip4:45.67.139.10 include:zoho.com include:relay.mailchannels.net ~all` | autorise Zoho **et** le serveur cPanel |
+| SPF | `v=spf1 ip4:45.67.139.10 include:zoho.com include:relay.mailchannels.net ~all` | autorise Zoho **et** le serveur cPanel |
 | DKIM | `zmail._domainkey` | signature Zoho |
 | DMARC | `_dmarc` : `p=none` | à resserrer en `quarantine` une fois les envois vérifiés |
+
+> ⚠️ **Le SPF est limité à 10 résolutions DNS.** Au-delà, il devient invalide
+> (`PERMERROR`) et les messages sont traités comme non authentifiés. Avec les
+> MX chez Zoho, un `+mx` coûtait à lui seul 4 résolutions et faisait passer le
+> total à 11. Les mécanismes `+a` et `+mx` ont donc été retirés : ils
+> n'apportaient rien, le serveur d'envoi étant déjà couvert par `ip4:` et les
+> MX ne servant qu'à recevoir. On est désormais à 6 sur 10. Avant d'ajouter un
+> `include:`, recomptez.
 
 Le domaine est en **Remote Mail Exchanger** dans cPanel : sans ce réglage, cPanel
 continuerait de livrer le courrier localement malgré les MX Zoho, et rien
